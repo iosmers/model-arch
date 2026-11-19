@@ -114,6 +114,13 @@
   .ticks{display:flex; gap:2px; margin-top:3px}
   .ticks .t{width:10.8px; flex:0 0 auto; font:10.5px var(--mono); color:var(--ter); text-align:center; overflow:visible; white-space:nowrap}
   .legend{display:flex; gap:16px; flex-wrap:wrap; font-size:12px; color:var(--sec); margin-top:10px}
+  .mtp-row{display:flex; align-items:center; gap:10px; margin-top:12px; padding-top:12px; border-top:1px dashed #22304a; flex-wrap:wrap}
+  .mtp-label{font:600 11.5px var(--mono); color:var(--pink); letter-spacing:.6px}
+  .mcell{width:38px; height:34px; border-radius:7px; background:linear-gradient(180deg,#2a1830,#181022);
+    border:1px solid #4a2b45; color:var(--pink); font:600 12px var(--mono); cursor:pointer}
+  .mcell:hover{outline:1px solid rgba(244,114,182,.8); transform:translateY(-2px)}
+  .mcell.sel{outline:2px solid #fff}
+  .mtp-hint{font-size:11.5px; color:var(--ter)}
   .legend i{display:inline-block; width:9px; height:9px; border-radius:2px; margin-right:6px}
 
   #layerDetail{display:grid; grid-template-columns:150px 1fr; gap:10px 16px; font-size:13.5px; max-width:560px; min-width:0}
@@ -294,6 +301,11 @@
       <div class="strip" id="strip"></div>
       <div class="ticks" id="ticks"></div>
     </div>
+  </div>
+  <div class="mtp-row">
+    <span class="mtp-label">MTP</span>
+    <div class="strip" id="mtpStrip" style="gap:6px"></div>
+    <span class="mtp-hint">3 层，不在 92 层主干里；全 BF16，合计 2.516 B</span>
   </div>
   <div class="legend">
     <span><i style="background:var(--teal)"></i>上：Gated SWA ×69</span>
@@ -580,18 +592,23 @@
       <div style="font-size:11.5px;color:var(--ter);text-align:center">输出隐状态 h′ 传给下一块 MTP</div>
     </div>
     <div>
-      <h3 style="margin-top:0">每块的参数构成（0.839 B）</h3>
+      <h3 style="margin-top:0">每块的权重清单（17 个张量 · 全 BF16）</h3>
       <table class="data">
-        <tr><th>组件</th><th>形状</th><th class="r">参数量</th></tr>
-        <tr><td>enorm / hnorm</td><td class="m">[4096] ×2</td><td class="num">8.2 K</td></tr>
-        <tr><td>eh_proj</td><td class="m">[4096, 8192]</td><td class="num">33.55 M</td></tr>
-        <tr><td>Decoder · 注意力</td><td class="m">GQA 64Q/4KV · head_dim 192 ＋ g_proj</td><td class="num">107.22 M</td></tr>
-        <tr><td>Decoder · 稠密 MLP</td><td class="m">SwiGLU，d = 13824（非 MoE）</td><td class="num">169.87 M</td></tr>
-        <tr><td>Decoder · RMSNorm</td><td class="m">[4096] ×2</td><td class="num">8.2 K</td></tr>
-        <tr><td>shared_head.norm</td><td class="m">[4096]</td><td class="num">4.1 K</td></tr>
-        <tr><td>shared_head.output</td><td class="m">[128896, 4096]</td><td class="num">527.96 M</td></tr>
-        <tr><td colspan="2"><b>单块合计</b></td><td class="num"><b>838.62 M</b></td></tr>
-        <tr><td colspan="2"><b>3 块合计</b></td><td class="num"><b>2.516 B</b></td></tr>
+        <tr><th>张量</th><th>形状</th><th class="r">参数量</th><th>精度</th></tr>
+        <tr><td>enorm / hnorm</td><td class="m">[4096] ×2</td><td class="num">8.2 K</td><td class="dim">BF16</td></tr>
+        <tr><td>eh_proj</td><td class="m">[4096, 8192]</td><td class="num">33.55 M</td><td class="dim">BF16</td></tr>
+        <tr><td>self_attn.q_proj</td><td class="m">[12288, 4096]</td><td class="num">50.33 M</td><td class="dim">BF16</td></tr>
+        <tr><td>self_attn.k_proj / v_proj</td><td class="m">[768, 4096] ×2</td><td class="num">6.29 M</td><td class="dim">BF16</td></tr>
+        <tr><td>self_attn.o_proj</td><td class="m">[4096, 12288]</td><td class="num">50.33 M</td><td class="dim">BF16</td></tr>
+        <tr><td>self_attn.g_proj</td><td class="m">[64, 4096]</td><td class="num">0.26 M</td><td class="dim">BF16</td></tr>
+        <tr><td>q_norm / k_norm</td><td class="m">[192] ×2</td><td class="num">384</td><td class="dim">BF16</td></tr>
+        <tr><td>input / post_attention norm</td><td class="m">[4096] ×2</td><td class="num">8.2 K</td><td class="dim">BF16</td></tr>
+        <tr><td>mlp.gate_proj / up_proj</td><td class="m">[13824, 4096] ×2</td><td class="num">113.25 M</td><td class="dim">BF16</td></tr>
+        <tr><td>mlp.down_proj</td><td class="m">[4096, 13824]</td><td class="num">56.62 M</td><td class="dim">BF16</td></tr>
+        <tr><td>shared_head.norm</td><td class="m">[4096]</td><td class="num">4.1 K</td><td class="dim">BF16</td></tr>
+        <tr><td>shared_head.output</td><td class="m">[128896, 4096]</td><td class="num">527.96 M</td><td class="dim">BF16</td></tr>
+        <tr><td colspan="2"><b>单块合计（17 个张量）</b></td><td class="num"><b>838.62 M</b></td><td class="dim">全 BF16</td></tr>
+        <tr><td colspan="2"><b>3 块合计</b></td><td class="num"><b>2.516 B</b></td><td class="dim">占全模型 0.42 %</td></tr>
       </table>
       <div class="note violet" style="margin-top:12px"><b>权重精度：全 BF16。</b>3 层的 attention / mlp / shared_head 都在 <code class="inline">modules_to_not_convert</code> 里（共 36 条），checkpoint 中没有任何 FP8 scale 张量。<br>63% 的参数是输出层：3 块各自带一份 128896×4096 的 <code class="inline">shared_head.output</code>，所以 MTP 看着「只有 3 层」却占了 2.52 B。</div>
     </div>
@@ -767,6 +784,18 @@
   }
 
   function detail(i){
+    if (i >= 92){
+      var k = i - 91;
+      document.getElementById('dL').textContent = 'MTP-' + k;
+      document.getElementById('dA').innerHTML = '<span class="tag t-teal">Gated SWA</span> 滑窗 512（和主干滑窗层同款）';
+      document.getElementById('dF').innerHTML = '<span class="tag t-slate">Dense</span> 稠密 MLP，d = 13824（<b>不是 MoE</b>）';
+      document.getElementById('dR').innerHTML = 'θ = 1e4，全维 192';
+      document.getElementById('dI').innerHTML = '— 无（滑窗层不带 indexer）';
+      document.getElementById('dP').innerHTML = '<span class="mono" style="font-size:16px">0.8386</span> B ／ 3 层合计 2.516 B';
+      document.getElementById('dQ').innerHTML = '<span class="tag t-slate">BF16</span> 17 个张量全部 BF16（含 eh_proj 与 shared_head）';
+      document.getElementById('dN').textContent = 'h ⊕ Emb → hnorm/enorm → eh_proj → decoder ×1 → shared_head；只用于训练与投机解码';
+      return;
+    }
     var full = (i % 4 === 3), moe = (i>=3 && i<=90);
     var c = full ? (moe ? CLS.moeFull : CLS.denseFull) : (moe ? CLS.moeSlide : CLS.denseSlide);
     document.getElementById('dL').textContent = 'L' + i;
@@ -797,11 +826,25 @@
     document.getElementById('dN').textContent = note.join('；');
   }
 
+  var mtpCells = [];
+  (function(){
+    var box = document.getElementById('mtpStrip');
+    for (var j = 1; j <= 3; j++){
+      var c = document.createElement('button');
+      c.className = 'mcell'; c.type = 'button'; c.textContent = 'M' + j;
+      c.title = 'MTP-' + j + ' · dense decoder ＋ shared_head · BF16';
+      c.dataset.i = 91 + j;
+      c.addEventListener('click', (function(idx){ return function(){ select(idx); }; })(91 + j));
+      box.appendChild(c); mtpCells.push(c);
+    }
+  })();
+
   var current = -1;
+  function cellOf(i){ return i < 92 ? cells[i] : mtpCells[i - 92]; }
   function select(i){
-    if (current >= 0) cells[current].classList.remove('sel');
+    if (current >= 0) cellOf(current).classList.remove('sel');
     current = i;
-    cells[i].classList.add('sel');
+    cellOf(i).classList.add('sel');
     detail(i);
     var r = cells[i].getBoundingClientRect(), s = strip.getBoundingClientRect();
     if (r.left < s.left || r.right > s.right){ cells[i].scrollIntoView({block:'nearest', inline:'center'}); }
@@ -810,7 +853,7 @@
 
   document.addEventListener('keydown', function(e){
     if (e.target && e.target.tagName === 'INPUT') return;
-    if (e.key === 'ArrowRight' && current < 91) select(current+1);
+    if (e.key === 'ArrowRight' && current < 94) select(current+1);
     if (e.key === 'ArrowLeft' && current > 0) select(current-1);
   });
 
