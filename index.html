@@ -116,7 +116,7 @@
   .legend{display:flex; gap:16px; flex-wrap:wrap; font-size:12px; color:var(--sec); margin-top:10px}
   .legend i{display:inline-block; width:9px; height:9px; border-radius:2px; margin-right:6px}
 
-  #layerDetail{display:grid; grid-template-columns:180px 1fr; gap:10px 18px; font-size:13.5px}
+  #layerDetail{display:grid; grid-template-columns:150px 1fr; gap:10px 16px; font-size:13.5px; max-width:560px; min-width:0}
   #layerDetail dt{color:var(--ter); font-size:12.5px}
   #layerDetail dd{margin:0; color:var(--txt)}
   #layerDetail .big{font:700 26px var(--mono); color:var(--txt)}
@@ -215,7 +215,7 @@
     .grid2,.grid3{grid-template-columns:1fr}
     .calc{grid-template-columns:1fr}
     nav{display:none}
-    #layerDetail{grid-template-columns:1fr}
+    #layerDetail{grid-template-columns:1fr; max-width:none}
   }
 </style>
 </head>
@@ -299,8 +299,26 @@
     <span><i style="background:var(--teal)"></i>上：Gated SWA ×69</span>
     <span><i style="background:var(--amber)"></i>上：Sparse GQA ×23</span>
     <span><i style="background:var(--violet)"></i>下：MoE ×88</span>
+    <span><i style="background:repeating-linear-gradient(45deg,#a78bfa 0 2.5px,#e9d5ff 2.5px 5px)"></i>下：专家 BF16 ×3</span>
     <span><i style="background:var(--slate)"></i>下：Dense FFN ×4</span>
   </div>
+</div>
+
+<div class="card">
+  <h3 style="margin-top:0">权重精度地图 <small style="color:var(--ter);font-weight:400">FP8 只落在路由专家上</small></h3>
+  <table class="data">
+    <tr><th>模块</th><th>精度</th><th>覆盖</th></tr>
+    <tr><td>路由专家 w13 / w2</td><td><span class="tag t-teal">FP8</span>e4m3 · 128×128 分块 · 动态激活</td><td>85 层（L3–L87，去掉 L88–90）</td></tr>
+    <tr><td>路由专家（L88–90）</td><td><span class="tag t-slate">BF16</span></td><td>3 层 ≈ 19.9 B</td></tr>
+    <tr><td>Attention（q/k/v/o/g_proj）</td><td><span class="tag t-slate">BF16</span></td><td>92 层</td></tr>
+    <tr><td>router（moe.gate ＋ bias）</td><td><span class="tag t-slate">BF16</span>（打分走 FP32）</td><td>88 层</td></tr>
+    <tr><td>共享专家</td><td><span class="tag t-slate">BF16</span></td><td>88 层</td></tr>
+    <tr><td>稠密 MLP</td><td><span class="tag t-slate">BF16</span></td><td>L0–2 · L91</td></tr>
+    <tr><td>MTP（mtp_block ＋ shared_head）</td><td><span class="tag t-slate">BF16</span></td><td>L92–94</td></tr>
+    <tr><td>Embedding / LM Head / norm</td><td><span class="tag t-slate">BF16</span></td><td>—</td></tr>
+    <tr><td>ViT ＋ 视觉投影</td><td><span class="tag t-slate">BF16</span></td><td>47 层 ＋ 1 个线性</td></tr>
+  </table>
+  <div class="note" style="margin-top:12px">FP8 覆盖 <b>564.7 B / 602.97 B ＝ 93.7%</b> 的参数（85 层 × 3 个张量 ＝ 255 个），剩下 6.3%（38.3 B）全是 BF16。判断依据是 <code class="inline">quantization_config.modules_to_not_convert</code>：名单里的模块保持原精度，其余走 FP8。</div>
 </div>
 
 <div class="card">
@@ -312,16 +330,17 @@
       <dt>RoPE</dt><dd id="dR">—</dd>
       <dt>Sparse indexer</dt><dd id="dI">—</dd>
       <dt>本层参数</dt><dd id="dP">—</dd>
+      <dt>权重精度</dt><dd id="dQ">—</dd>
       <dt>备注</dt><dd id="dN">—</dd>
     </div>
     <div style="flex:1; min-width:280px">
       <h3 style="margin-top:0">四类层的参数（按权重实际统计）</h3>
       <table class="data">
-        <tr><th>层类型</th><th>层号</th><th style="text-align:right">层数</th><th style="text-align:right">单层参数</th></tr>
-        <tr><td><span class="tag t-teal">滑窗</span><span class="tag t-slate">Dense</span></td><td class="m">L0 – L2</td><td class="num">3</td><td class="num">0.277 B</td></tr>
-        <tr><td><span class="tag t-amber">稀疏全文</span><span class="tag t-slate">Dense</span></td><td class="m">L91</td><td class="num">1</td><td class="num">0.296 B</td></tr>
-        <tr><td><span class="tag t-teal">滑窗</span><span class="tag t-violet">MoE</span></td><td class="m">其余 66 层</td><td class="num">66</td><td class="num">6.771 B</td></tr>
-        <tr><td><span class="tag t-amber">稀疏全文</span><span class="tag t-violet">MoE</span></td><td class="m">3,7,…,87</td><td class="num">22</td><td class="num">6.790 B</td></tr>
+        <tr><th>层类型</th><th>层号</th><th style="text-align:right">层数</th><th style="text-align:right">单层参数</th><th>专家精度</th></tr>
+        <tr><td><span class="tag t-teal">滑窗</span><span class="tag t-slate">Dense</span></td><td class="m">L0 – L2</td><td class="num">3</td><td class="num">0.277 B</td><td class="dim">—</td></tr>
+        <tr><td><span class="tag t-amber">稀疏全文</span><span class="tag t-slate">Dense</span></td><td class="m">L91</td><td class="num">1</td><td class="num">0.296 B</td><td class="dim">—</td></tr>
+        <tr><td><span class="tag t-teal">滑窗</span><span class="tag t-violet">MoE</span></td><td class="m">其余 66 层</td><td class="num">66</td><td class="num">6.771 B</td><td><span class="tag t-teal">FP8</span><span class="dim">L88–90 为 BF16</span></td></tr>
+        <tr><td><span class="tag t-amber">稀疏全文</span><span class="tag t-violet">MoE</span></td><td class="m">3,7,…,87</td><td class="num">22</td><td class="num">6.790 B</td><td><span class="tag t-teal">FP8</span></td></tr>
       </table>
       <div class="note" style="margin-top:12px">全文层比滑窗层多的 18.9 M 就是 sparse indexer（每个全文层一套）。其余完全一致。</div>
     </div>
@@ -574,7 +593,7 @@
         <tr><td colspan="2"><b>单块合计</b></td><td class="num"><b>838.62 M</b></td></tr>
         <tr><td colspan="2"><b>3 块合计</b></td><td class="num"><b>2.516 B</b></td></tr>
       </table>
-      <div class="note violet" style="margin-top:12px">63% 的参数是输出层：3 块各自带一份 128896×4096 的 <code class="inline">shared_head.output</code>，所以 MTP 看着「只有 3 层」却占了 2.52 B。</div>
+      <div class="note violet" style="margin-top:12px"><b>权重精度：全 BF16。</b>3 层的 attention / mlp / shared_head 都在 <code class="inline">modules_to_not_convert</code> 里（共 36 条），checkpoint 中没有任何 FP8 scale 张量。<br>63% 的参数是输出层：3 块各自带一份 128896×4096 的 <code class="inline">shared_head.output</code>，所以 MTP 看着「只有 3 层」却占了 2.52 B。</div>
     </div>
   </div>
 </div>
@@ -697,7 +716,7 @@
       <tr><td>attention_impl</td><td class="m">sparse_gqa</td></tr>
       <tr><td>vision.layers / width</td><td class="m">47 / 1536</td></tr>
       <tr><td>vision.image_size / patch</td><td class="m">728 / 14</td></tr>
-      <tr><td>quantization</td><td class="m">fp8 e4m3 · 128×128 · dynamic</td></tr>
+      <tr><td>quantization</td><td class="m">fp8 e4m3 · 128×128 · dynamic（仅路由专家）</td></tr>
     </table>
     <pre><span class="c">// layer_types 前 8 项（共 95 = 92 + 3 MTP）</span>
 ["sliding","sliding","sliding",<span class="v">"full"</span>,
@@ -734,9 +753,13 @@
     b.className = 'cell';
     b.type = 'button';
     b.setAttribute('aria-label', 'L'+i);
-    b.title = 'L' + i + ' · ' + (full ? '稀疏全文' : '滑窗') + ' + ' + (moe ? 'MoE' : '稠密 FFN');
+    var moeBF16 = moe && i >= 88;
+    b.title = 'L' + i + ' · ' + (full ? '稀疏全文' : '滑窗') + ' + ' +
+              (moe ? (moeBF16 ? 'MoE（专家 BF16）' : 'MoE（专家 FP8）') : '稠密 FFN');
+    var ffnBg = !moe ? SLATE
+      : (moeBF16 ? 'repeating-linear-gradient(45deg,#a78bfa 0 2.5px,#e9d5ff 2.5px 5px)' : VIOLET);
     b.innerHTML = '<span class="a" style="background:'+(full?AMBER:TEAL)+'"></span>'+
-                  '<span class="f" style="background:'+(moe?VIOLET:SLATE)+'"></span>';
+                  '<span class="f" style="background:'+ffnBg+'"></span>';
     b.dataset.i = i;
     b.addEventListener('click', function(e){ select(+e.currentTarget.dataset.i); });
     strip.appendChild(b);
@@ -758,6 +781,11 @@
       : 'θ = 1e4，全维 192';
     document.getElementById('dI').innerHTML = full ? '✓ 本层带 indexer（18.9 M）' : '— 无（只在全文层）';
     document.getElementById('dP').innerHTML = '<span class="mono" style="font-size:16px">'+c.p.toFixed(4)+'</span> B';
+    document.getElementById('dQ').innerHTML = !moe
+      ? '<span class="tag t-slate">BF16</span> 稠密 MLP 未量化；attention / norm 同样 BF16'
+      : (i >= 88
+         ? '<span class="tag t-slate">BF16</span> 路由专家未量化（配置里点名排除）；共享 / router / attention 也是 BF16'
+         : '<span class="tag t-teal">FP8</span> 路由专家 w13/w2（e4m3 · 128×128 分块 · 动态激活）；共享 / router / attention 仍 BF16');
     var note = [];
     if (i === 0) note.push('第一层：滑窗 + 稠密 FFN，之后连续两层同为滑窗');
     else if (i === 3) note.push('第一个稀疏全文层，3:1 的节奏从这里开始');
