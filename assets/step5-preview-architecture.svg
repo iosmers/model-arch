@@ -1,0 +1,937 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="2360" height="1100" viewBox="0 0 2360 1100">
+<defs><linearGradient id="bg" x1="0" y1="0" x2="0.6" y2="1"><stop offset="0" stop-color="#0a1120"/><stop offset="0.55" stop-color="#070c17"/><stop offset="1" stop-color="#080e1b"/></linearGradient><pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse"><path d="M40 0 L0 0 0 40" fill="none" stroke="#16233a" stroke-width="0.6" opacity="0.5"/></pattern></defs>
+<rect width="2360" height="1100" fill="url(#bg)"/>
+<rect width="2360" height="1100" fill="url(#grid)" opacity="0.45"/>
+<rect width="2360" height="1100" fill="none" stroke="#1a2740" stroke-width="2"/>
+<text x="36.0" y="44.0" font-family="Helvetica Neue, SF Pro Text, PingFang SC, Hiragino Sans GB, Arial, sans-serif" font-size="11.5" fill="#5eead4" font-weight="700" text-anchor="start" letter-spacing="2.6">STEPFUN  ·  STEP-5-PREVIEW  ·  MODEL ARCHITECTURE</text>
+<text x="36.0" y="86.0" font-family="Helvetica Neue, SF Pro Display, PingFang SC, sans-serif" font-size="40" fill="#e9eefb" font-weight="700" text-anchor="start">Step-5-Preview 模型结构</text>
+<text x="36.0" y="118.0" font-family="Helvetica Neue, SF Pro Text, PingFang SC, Hiragino Sans GB, Arial, sans-serif" font-size="15.5" fill="#95a7c4" font-weight="400" text-anchor="start">窄而深（narrow but deep）：92 层 × hidden 4096 ｜ 3:1 交错 Gated SWA / Sparse GQA ｜ 88 层稀疏 MoE（352 路由 + 1 共享）｜ ViT 视觉塔 + 3 层 MTP</text>
+<rect x="2116.0" y="30.0" width="208.0" height="66.0" rx="12" fill="#0d1728" stroke="#26374f" stroke-width="1.2"/>
+<text x="2130.0" y="62.0" font-family="SF Mono, SFMono-Regular, Menlo, Consolas, monospace" font-size="25" fill="#a78bfa" font-weight="700" text-anchor="start">1,048,576</text>
+<text x="2130.0" y="84.0" font-family="Helvetica Neue, SF Pro Text, PingFang SC, Hiragino Sans GB, Arial, sans-serif" font-size="12.5" fill="#61738f" font-weight="400" text-anchor="start">最大上下文（token）</text>
+<line x1="2130.0" y1="70.0" x2="2267.8" y2="70.0" stroke="#a78bfa" stroke-width="1.6" opacity="1.0"/>
+<rect x="1896.0" y="30.0" width="208.0" height="66.0" rx="12" fill="#0d1728" stroke="#26374f" stroke-width="1.2"/>
+<text x="1910.0" y="62.0" font-family="SF Mono, SFMono-Regular, Menlo, Consolas, monospace" font-size="25" fill="#f6b26b" font-weight="700" text-anchor="start">≈ 27 B</text>
+<text x="1910.0" y="84.0" font-family="Helvetica Neue, SF Pro Text, PingFang SC, Hiragino Sans GB, Arial, sans-serif" font-size="12.5" fill="#61738f" font-weight="400" text-anchor="start">每 token 激活参数</text>
+<line x1="1910.0" y1="70.0" x2="1986.0" y2="70.0" stroke="#f6b26b" stroke-width="1.6" opacity="1.0"/>
+<rect x="1676.0" y="30.0" width="208.0" height="66.0" rx="12" fill="#0d1728" stroke="#26374f" stroke-width="1.2"/>
+<text x="1690.0" y="62.0" font-family="SF Mono, SFMono-Regular, Menlo, Consolas, monospace" font-size="25" fill="#2dd4bf" font-weight="700" text-anchor="start">602.97 B</text>
+<text x="1690.0" y="84.0" font-family="Helvetica Neue, SF Pro Text, PingFang SC, Hiragino Sans GB, Arial, sans-serif" font-size="12.5" fill="#61738f" font-weight="400" text-anchor="start">总参数（权重索引复算）</text>
+<line x1="1690.0" y1="70.0" x2="1805.8" y2="70.0" stroke="#2dd4bf" stroke-width="1.6" opacity="1.0"/>
+<line x1="36.0" y1="136.0" x2="2324.0" y2="136.0" stroke="#1d2b42" stroke-width="1" opacity="1.0"/>
+<rect x="42.0" y="158.0" width="24" height="24" rx="7" fill="#2dd4bf" opacity="0.16"/>
+<rect x="42.0" y="158.0" width="24" height="24" rx="7" fill="none" stroke="#2dd4bf" stroke-width="1" opacity="0.55"/>
+<text x="53.5" y="174.5" font-family="SF Mono, SFMono-Regular, Menlo, Consolas, monospace" font-size="12.5" fill="#2dd4bf" font-weight="700" text-anchor="middle">1</text>
+<text x="76.0" y="175.5" font-family="Helvetica Neue, SF Pro Text, PingFang SC, Hiragino Sans GB, Arial, sans-serif" font-size="20.5" fill="#e9eefb" font-weight="600" text-anchor="start">端到端数据流</text>
+<line x1="42.0" y1="190.0" x2="790.0" y2="190.0" stroke="#182640" stroke-width="1" opacity="1.0"/>
+<rect x="48.0" y="206.0" width="330.0" height="52.0" rx="11" fill="#0e1727" stroke="#212f47" stroke-width="1.2"/>
+<rect x="48.0" y="206.0" width="4" height="52" fill="#2dd4bf" opacity="0.85"/>
+<text x="64.0" y="232.0" font-family="Helvetica Neue, SF Pro Text, PingFang SC, Hiragino Sans GB, Arial, sans-serif" font-size="16" fill="#e9eefb" font-weight="600" text-anchor="start">文本 token</text>
+<text x="64.0" y="254.0" font-family="Helvetica Neue, SF Pro Text, PingFang SC, Hiragino Sans GB, Arial, sans-serif" font-size="12.4" fill="#61738f" font-weight="400" text-anchor="start">vocab 128,896 · 上限 1M token</text>
+<line x1="213.0" y1="258.0" x2="213.0" y2="282.0" stroke="#3d5170" stroke-width="1.6" opacity="1.0"/>
+<polygon points="213.0,282.0 216.4,274.5 209.6,274.5" fill="#3d5170"/>
+<rect x="48.0" y="282.0" width="330.0" height="56.0" rx="11" fill="#0e1727" stroke="#212f47" stroke-width="1.2"/>
+<rect x="48.0" y="282.0" width="4" height="56" fill="#2dd4bf" opacity="0.85"/>
+<text x="64.0" y="308.0" font-family="Helvetica Neue, SF Pro Text, PingFang SC, Hiragino Sans GB, Arial, sans-serif" font-size="16" fill="#e9eefb" font-weight="600" text-anchor="start">Embedding</text>
+<text x="64.0" y="330.0" font-family="Helvetica Neue, SF Pro Text, PingFang SC, Hiragino Sans GB, Arial, sans-serif" font-size="12.4" fill="#61738f" font-weight="400" text-anchor="start">128,896 × 4096 ＝ 0.528 B</text>
+<line x1="213.0" y1="338.0" x2="213.0" y2="362.0" stroke="#3d5170" stroke-width="1.6" opacity="1.0"/>
+<polygon points="213.0,362.0 216.4,354.5 209.6,354.5" fill="#3d5170"/>
+<rect x="48.0" y="362.0" width="330.0" height="84.0" rx="11" fill="#0e1727" stroke="#212f47" stroke-width="1.2"/>
+<rect x="48.0" y="362.0" width="4" height="84" fill="#2dd4bf" opacity="0.85"/>
+<text x="64.0" y="388.0" font-family="Helvetica Neue, SF Pro Text, PingFang SC, Hiragino Sans GB, Arial, sans-serif" font-size="16" fill="#e9eefb" font-weight="600" text-anchor="start">文本隐状态  h = 4096</text>
+<text x="64.0" y="410.0" font-family="Helvetica Neue, SF Pro Text, PingFang SC, Hiragino Sans GB, Arial, sans-serif" font-size="12.2" fill="#61738f" font-weight="400" text-anchor="start">fp32_residual_connection = true</text>
+<text x="64.0" y="430.0" font-family="Helvetica Neue, SF Pro Text, PingFang SC, Hiragino Sans GB, Arial, sans-serif" font-size="12.2" fill="#61738f" font-weight="400" text-anchor="start">92 层共享同一条 FP32 残差流</text>
+<rect x="436.0" y="206.0" width="348.0" height="52.0" rx="11" fill="#0e1727" stroke="#212f47" stroke-width="1.2"/>
+<rect x="436.0" y="206.0" width="4" height="52" fill="#60a5fa" opacity="0.85"/>
+<text x="452.0" y="232.0" font-family="Helvetica Neue, SF Pro Text, PingFang SC, Hiragino Sans GB, Arial, sans-serif" font-size="16" fill="#e9eefb" font-weight="600" text-anchor="start">图像输入</text>
+<text x="452.0" y="254.0" font-family="Helvetica Neue, SF Pro Text, PingFang SC, Hiragino Sans GB, Arial, sans-serif" font-size="12.4" fill="#61738f" font-weight="400" text-anchor="start">728×728 概览 ＋ 504×504 切片</text>
+<line x1="610.0" y1="258.0" x2="610.0" y2="282.0" stroke="#3d5170" stroke-width="1.6" opacity="1.0"/>
+<polygon points="610.0,282.0 613.4,274.5 606.6,274.5" fill="#3d5170"/>
+<rect x="436.0" y="282.0" width="348.0" height="84.0" rx="11" fill="#0e1727" stroke="#212f47" stroke-width="1.2"/>
+<rect x="436.0" y="282.0" width="4" height="84" fill="#60a5fa" opacity="0.85"/>
+<text x="452.0" y="308.0" font-family="Helvetica Neue, SF Pro Text, PingFang SC, Hiragino Sans GB, Arial, sans-serif" font-size="16" fill="#e9eefb" font-weight="600" text-anchor="start">ViT 视觉塔 × 47</text>
+<text x="452.0" y="330.0" font-family="Helvetica Neue, SF Pro Text, PingFang SC, Hiragino Sans GB, Arial, sans-serif" font-size="12.0" fill="#61738f" font-weight="400" text-anchor="start">width 1536 · 16 heads · patch 14</text>
+<text x="452.0" y="350.0" font-family="Helvetica Neue, SF Pro Text, PingFang SC, Hiragino Sans GB, Arial, sans-serif" font-size="12.0" fill="#61738f" font-weight="400" text-anchor="start">QuickGELU · LayerScale 0.1 · 2D-RoPE</text>
+<line x1="610.0" y1="366.0" x2="610.0" y2="384.0" stroke="#3d5170" stroke-width="1.6" opacity="1.0"/>
+<polygon points="610.0,384.0 613.4,376.5 606.6,376.5" fill="#3d5170"/>
+<rect x="436.0" y="384.0" width="348.0" height="74.0" rx="11" fill="#0e1727" stroke="#212f47" stroke-width="1.2"/>
+<rect x="436.0" y="384.0" width="4" height="74" fill="#60a5fa" opacity="0.85"/>
+<text x="452.0" y="410.0" font-family="Helvetica Neue, SF Pro Text, PingFang SC, Hiragino Sans GB, Arial, sans-serif" font-size="16" fill="#e9eefb" font-weight="600" text-anchor="start">视觉投影</text>
+<text x="452.0" y="432.0" font-family="Helvetica Neue, SF Pro Text, PingFang SC, Hiragino Sans GB, Arial, sans-serif" font-size="12.2" fill="#61738f" font-weight="400" text-anchor="start">stride-2 conv × 2：1536→3072→6144</text>
+<text x="452.0" y="452.0" font-family="Helvetica Neue, SF Pro Text, PingFang SC, Hiragino Sans GB, Arial, sans-serif" font-size="12.2" fill="#61738f" font-weight="400" text-anchor="start">linear 6144 → 4096（无 bias）</text>
+<line x1="610.0" y1="458.0" x2="610.0" y2="476.0" stroke="#3d5170" stroke-width="1.6" opacity="1.0"/>
+<polygon points="610.0,476.0 613.4,468.5 606.6,468.5" fill="#3d5170"/>
+<rect x="436.0" y="476.0" width="348.0" height="54.0" rx="11" fill="#0e1727" stroke="#212f47" stroke-width="1.2"/>
+<rect x="436.0" y="476.0" width="4" height="54" fill="#60a5fa" opacity="0.85"/>
+<text x="452.0" y="502.0" font-family="Helvetica Neue, SF Pro Text, PingFang SC, Hiragino Sans GB, Arial, sans-serif" font-size="15" fill="#e9eefb" font-weight="600" text-anchor="start">视觉 token</text>
+<text x="452.0" y="524.0" font-family="Helvetica Neue, SF Pro Text, PingFang SC, Hiragino Sans GB, Arial, sans-serif" font-size="12.2" fill="#61738f" font-weight="400" text-anchor="start">概览 169 ＋ 每切片 81</text>
+<rect x="48.0" y="546.0" width="736.0" height="40.0" rx="10" fill="#0f1c2e" stroke="#2a3d5c" stroke-width="1.2"/>
+<text x="66.0" y="571.0" font-family="Helvetica Neue, SF Pro Text, PingFang SC, Hiragino Sans GB, Arial, sans-serif" font-size="13.5" fill="#95a7c4" font-weight="500" text-anchor="start">拼接：文本 token ＋ 视觉 token → 一条统一序列（图文交错）</text>
+<line x1="213.0" y1="446.0" x2="213.0" y2="546.0" stroke="#3d5170" stroke-width="1.6" opacity="1.0"/>
+<polygon points="213.0,546.0 216.4,538.5 209.6,538.5" fill="#3d5170"/>
+<line x1="610.0" y1="530.0" x2="610.0" y2="546.0" stroke="#3d5170" stroke-width="1.6" opacity="1.0"/>
+<polygon points="610.0,546.0 613.4,538.5 606.6,538.5" fill="#3d5170"/>
+<rect x="48.0" y="604.0" width="736.0" height="164.0" rx="14" fill="#101c30" stroke="#2b3f60" stroke-width="1.2"/>
+<rect x="48" y="604" width="736" height="164" rx="14" fill="none" stroke="#2dd4bf" stroke-width="1" opacity="0.28"/>
+<text x="68.0" y="637.0" font-family="Helvetica Neue, SF Pro Text, PingFang SC, Hiragino Sans GB, Arial, sans-serif" font-size="22" fill="#e9eefb" font-weight="700" text-anchor="start">92 × Decoder Block</text>
+<rect x="312.0" y="618.0" width="72.2" height="21" rx="10.5" fill="#2dd4bf" opacity="0.13"/>
+<rect x="312.0" y="618.0" width="72.2" height="21" rx="10.5" fill="none" stroke="#2dd4bf" stroke-width="0.9" opacity="0.55"/>
+<text x="321.0" y="632.6" font-family="Helvetica Neue, SF Pro Text, PingFang SC, Hiragino Sans GB, Arial, sans-serif" font-size="11.5" fill="#2dd4bf" font-weight="600" text-anchor="start">3 : 1 交错</text>
+<text x="402.0" y="637.0" font-family="Helvetica Neue, SF Pro Text, PingFang SC, Hiragino Sans GB, Arial, sans-serif" font-size="12.2" fill="#61738f" font-weight="400" text-anchor="start">hidden 4096 · FFN 前 RMSNorm · 每层 2 次残差</text>
+<line x1="66.0" y1="650.0" x2="766.0" y2="650.0" stroke="#25364f" stroke-width="1" opacity="1.0"/>
+<text x="68.0" y="676.0" font-family="Helvetica Neue, SF Pro Text, PingFang SC, Hiragino Sans GB, Arial, sans-serif" font-size="13.5" fill="#2dd4bf" font-weight="700" text-anchor="start">Attention</text>
+<text x="68.0" y="699.0" font-family="Helvetica Neue, SF Pro Text, PingFang SC, Hiragino Sans GB, Arial, sans-serif" font-size="12.6" fill="#95a7c4" font-weight="400" text-anchor="start">23 × Sparse GQA（稀疏全文）</text>
+<text x="68.0" y="721.0" font-family="Helvetica Neue, SF Pro Text, PingFang SC, Hiragino Sans GB, Arial, sans-serif" font-size="12.6" fill="#95a7c4" font-weight="400" text-anchor="start">69 × Gated SWA（窗口 512）</text>
+<line x1="446.0" y1="662.0" x2="446.0" y2="732.0" stroke="#25364f" stroke-width="1" opacity="1.0"/>
+<text x="470.0" y="676.0" font-family="Helvetica Neue, SF Pro Text, PingFang SC, Hiragino Sans GB, Arial, sans-serif" font-size="13.5" fill="#a78bfa" font-weight="700" text-anchor="start">FFN</text>
+<text x="470.0" y="699.0" font-family="Helvetica Neue, SF Pro Text, PingFang SC, Hiragino Sans GB, Arial, sans-serif" font-size="12.6" fill="#95a7c4" font-weight="400" text-anchor="start">88 × MoE（352 + 1，top-8）</text>
+<text x="470.0" y="721.0" font-family="Helvetica Neue, SF Pro Text, PingFang SC, Hiragino Sans GB, Arial, sans-serif" font-size="12.6" fill="#95a7c4" font-weight="400" text-anchor="start">4 × Dense MLP（d = 13824）</text>
+<text x="68.0" y="749.0" font-family="Helvetica Neue, SF Pro Text, PingFang SC, Hiragino Sans GB, Arial, sans-serif" font-size="11.2" fill="#61738f" font-weight="400" text-anchor="start">L0–L2 · L91 的 FFN 为稠密，其余 88 层为 MoE　｜　23 个全文层做全局检索，69 个滑窗层做局部建模</text>
+<line x1="236.0" y1="768.0" x2="236.0" y2="788.0" stroke="#3d5170" stroke-width="1.6" opacity="1.0"/>
+<polygon points="236.0,788.0 239.4,780.5 232.6,780.5" fill="#3d5170"/>
+<rect x="54.0" y="788.0" width="400.0" height="56.0" rx="11" fill="#0e1727" stroke="#212f47" stroke-width="1.2"/>
+<rect x="54.0" y="788.0" width="4" height="56" fill="#2dd4bf" opacity="0.85"/>
+<text x="70.0" y="814.0" font-family="Helvetica Neue, SF Pro Text, PingFang SC, Hiragino Sans GB, Arial, sans-serif" font-size="16" fill="#e9eefb" font-weight="600" text-anchor="start">LM Head</text>
+<text x="70.0" y="836.0" font-family="Helvetica Neue, SF Pro Text, PingFang SC, Hiragino Sans GB, Arial, sans-serif" font-size="12.2" fill="#61738f" font-weight="400" text-anchor="start">128,896 × 4096 ＝ 0.528 B（独立权重）</text>
+<line x1="254.0" y1="844.0" x2="254.0" y2="870.0" stroke="#3d5170" stroke-width="1.6" opacity="1.0"/>
+<polygon points="254.0,870.0 257.4,862.5 250.6,862.5" fill="#3d5170"/>
+<rect x="124.0" y="870.0" width="260.0" height="52.0" rx="11" fill="#0e1727" stroke="#212f47" stroke-width="1.2"/>
+<rect x="124.0" y="870.0" width="4" height="52" fill="#2dd4bf" opacity="0.85"/>
+<text x="140.0" y="896.0" font-family="Helvetica Neue, SF Pro Text, PingFang SC, Hiragino Sans GB, Arial, sans-serif" font-size="14.5" fill="#e9eefb" font-weight="600" text-anchor="start">next-token 分布</text>
+<text x="140.0" y="918.0" font-family="Helvetica Neue, SF Pro Text, PingFang SC, Hiragino Sans GB, Arial, sans-serif" font-size="11.4" fill="#61738f" font-weight="400" text-anchor="start">采样 / 投机解码校验</text>
+<rect x="500.0" y="784.0" width="284.0" height="96.0" rx="12" fill="#12101f" stroke="#4a3a63" stroke-width="1.2" stroke-dasharray="6 5"/>
+<text x="518.0" y="810.0" font-family="Helvetica Neue, SF Pro Text, PingFang SC, Hiragino Sans GB, Arial, sans-serif" font-size="17" fill="#f472b6" font-weight="700" text-anchor="start">MTP × 3</text>
+<text x="518.0" y="830.0" font-family="Helvetica Neue, SF Pro Text, PingFang SC, Hiragino Sans GB, Arial, sans-serif" font-size="10.6" fill="#95a7c4" font-weight="400" text-anchor="start">h ⊕ Emb(t) → eh_proj 8192→4096</text>
+<text x="518.0" y="848.0" font-family="Helvetica Neue, SF Pro Text, PingFang SC, Hiragino Sans GB, Arial, sans-serif" font-size="10.6" fill="#61738f" font-weight="400" text-anchor="start">→ Decoder ×1 → shared_head 0.53 B/层</text>
+<text x="518.0" y="866.0" font-family="Helvetica Neue, SF Pro Text, PingFang SC, Hiragino Sans GB, Arial, sans-serif" font-size="10.6" fill="#61738f" font-weight="400" text-anchor="start">3-token 投机解码；最小推理实现不加载</text>
+<line x1="668.0" y1="768.0" x2="668.0" y2="784.0" stroke="#6b5a86" stroke-width="1.3" stroke-dasharray="5 4" opacity="1.0"/>
+<polygon points="668.0,784.0 671.4,776.5 664.6,776.5" fill="#6b5a86"/>
+<rect x="48.0" y="946.0" width="736.0" height="98.0" rx="12" fill="#0e1727" stroke="#212f47" stroke-width="1.2"/>
+<text x="66.0" y="972.0" font-family="Helvetica Neue, SF Pro Text, PingFang SC, Hiragino Sans GB, Arial, sans-serif" font-size="14" fill="#e9eefb" font-weight="600" text-anchor="start">每 token 激活 ≈ 27 B 的构成</text>
+<text x="304.0" y="972.0" font-family="Helvetica Neue, SF Pro Text, PingFang SC, Hiragino Sans GB, Arial, sans-serif" font-size="11.5" fill="#61738f" font-weight="400" text-anchor="start">≈ 600 B 的总参数里，只有这一小部分参与每次前向</text>
+<rect x="66.0" y="984.0" width="343.2" height="24" rx="4" fill="#a78bfa" opacity="0.92"/>
+<text x="238.3" y="1001.0" font-family="SF Mono, SFMono-Regular, Menlo, Consolas, monospace" font-size="12" fill="#0b1220" font-weight="700" text-anchor="middle">13.3 B</text>
+<rect x="410.7" y="984.0" width="254.2" height="24" rx="4" fill="#f6b26b" opacity="0.92"/>
+<text x="538.5" y="1001.0" font-family="SF Mono, SFMono-Regular, Menlo, Consolas, monospace" font-size="12" fill="#0b1220" font-weight="700" text-anchor="middle">9.9 B</text>
+<rect x="666.4" y="984.0" width="41.6" height="24" rx="4" fill="#2dd4bf" opacity="0.92"/>
+<rect x="709.5" y="984.0" width="26.0" height="24" rx="4" fill="#60a5fa" opacity="0.92"/>
+<rect x="737.0" y="984.0" width="16.1" height="24" rx="4" fill="#5c6d88" opacity="0.92"/>
+<rect x="754.6" y="984.0" width="9.9" height="24" rx="4" fill="#5eead4" opacity="0.92"/>
+<rect x="66.0" y="1020.0" width="8" height="8" rx="2" fill="#a78bfa"/>
+<text x="78.0" y="1028.0" font-family="Helvetica Neue, SF Pro Text, PingFang SC, Hiragino Sans GB, Arial, sans-serif" font-size="11.2" fill="#95a7c4" font-weight="400" text-anchor="start">路由专家（8/352） 13.3</text>
+<rect x="226.3" y="1020.0" width="8" height="8" rx="2" fill="#f6b26b"/>
+<text x="238.3" y="1028.0" font-family="Helvetica Neue, SF Pro Text, PingFang SC, Hiragino Sans GB, Arial, sans-serif" font-size="11.2" fill="#95a7c4" font-weight="400" text-anchor="start">注意力 9.9</text>
+<rect x="311.5" y="1020.0" width="8" height="8" rx="2" fill="#2dd4bf"/>
+<text x="323.5" y="1028.0" font-family="Helvetica Neue, SF Pro Text, PingFang SC, Hiragino Sans GB, Arial, sans-serif" font-size="11.2" fill="#95a7c4" font-weight="400" text-anchor="start">共享专家 1.7</text>
+<rect x="407.9" y="1020.0" width="8" height="8" rx="2" fill="#60a5fa"/>
+<text x="419.9" y="1028.0" font-family="Helvetica Neue, SF Pro Text, PingFang SC, Hiragino Sans GB, Arial, sans-serif" font-size="11.2" fill="#95a7c4" font-weight="400" text-anchor="start">Emb+Head 1.1</text>
+<rect x="510.6" y="1020.0" width="8" height="8" rx="2" fill="#5c6d88"/>
+<text x="522.6" y="1028.0" font-family="Helvetica Neue, SF Pro Text, PingFang SC, Hiragino Sans GB, Arial, sans-serif" font-size="11.2" fill="#95a7c4" font-weight="400" text-anchor="start">稠密 FFN 0.7</text>
+<rect x="609.2" y="1020.0" width="8" height="8" rx="2" fill="#5eead4"/>
+<text x="621.2" y="1028.0" font-family="Helvetica Neue, SF Pro Text, PingFang SC, Hiragino Sans GB, Arial, sans-serif" font-size="11.2" fill="#95a7c4" font-weight="400" text-anchor="start">indexer 0.4</text>
+<rect x="834.0" y="158.0" width="24" height="24" rx="7" fill="#2dd4bf" opacity="0.16"/>
+<rect x="834.0" y="158.0" width="24" height="24" rx="7" fill="none" stroke="#2dd4bf" stroke-width="1" opacity="0.55"/>
+<text x="845.5" y="174.5" font-family="SF Mono, SFMono-Regular, Menlo, Consolas, monospace" font-size="12.5" fill="#2dd4bf" font-weight="700" text-anchor="middle">2</text>
+<text x="868.0" y="175.5" font-family="Helvetica Neue, SF Pro Text, PingFang SC, Hiragino Sans GB, Arial, sans-serif" font-size="20.5" fill="#e9eefb" font-weight="600" text-anchor="start">92 层堆叠：每 4 层 = 3 × Sliding + 1 × Sparse Full</text>
+<line x1="834.0" y1="190.0" x2="1542.0" y2="190.0" stroke="#182640" stroke-width="1" opacity="1.0"/>
+<rect x="898.0" y="208" width="5.9" height="24" rx="1.5" fill="#2dd4bf" opacity="0.92"/>
+<rect x="905.0" y="208" width="5.9" height="24" rx="1.5" fill="#2dd4bf" opacity="0.92"/>
+<rect x="912.0" y="208" width="5.9" height="24" rx="1.5" fill="#2dd4bf" opacity="0.92"/>
+<rect x="919.0" y="208" width="5.9" height="24" rx="1.5" fill="#f6b26b" opacity="1"/>
+<rect x="926.0" y="208" width="5.9" height="24" rx="1.5" fill="#2dd4bf" opacity="0.92"/>
+<rect x="933.0" y="208" width="5.9" height="24" rx="1.5" fill="#2dd4bf" opacity="0.92"/>
+<rect x="940.0" y="208" width="5.9" height="24" rx="1.5" fill="#2dd4bf" opacity="0.92"/>
+<rect x="947.0" y="208" width="5.9" height="24" rx="1.5" fill="#f6b26b" opacity="1"/>
+<rect x="954.0" y="208" width="5.9" height="24" rx="1.5" fill="#2dd4bf" opacity="0.92"/>
+<rect x="961.0" y="208" width="5.9" height="24" rx="1.5" fill="#2dd4bf" opacity="0.92"/>
+<rect x="968.0" y="208" width="5.9" height="24" rx="1.5" fill="#2dd4bf" opacity="0.92"/>
+<rect x="975.0" y="208" width="5.9" height="24" rx="1.5" fill="#f6b26b" opacity="1"/>
+<rect x="982.0" y="208" width="5.9" height="24" rx="1.5" fill="#2dd4bf" opacity="0.92"/>
+<rect x="989.0" y="208" width="5.9" height="24" rx="1.5" fill="#2dd4bf" opacity="0.92"/>
+<rect x="996.0" y="208" width="5.9" height="24" rx="1.5" fill="#2dd4bf" opacity="0.92"/>
+<rect x="1003.0" y="208" width="5.9" height="24" rx="1.5" fill="#f6b26b" opacity="1"/>
+<rect x="1010.0" y="208" width="5.9" height="24" rx="1.5" fill="#2dd4bf" opacity="0.92"/>
+<rect x="1017.0" y="208" width="5.9" height="24" rx="1.5" fill="#2dd4bf" opacity="0.92"/>
+<rect x="1024.0" y="208" width="5.9" height="24" rx="1.5" fill="#2dd4bf" opacity="0.92"/>
+<rect x="1031.0" y="208" width="5.9" height="24" rx="1.5" fill="#f6b26b" opacity="1"/>
+<rect x="1038.0" y="208" width="5.9" height="24" rx="1.5" fill="#2dd4bf" opacity="0.92"/>
+<rect x="1045.0" y="208" width="5.9" height="24" rx="1.5" fill="#2dd4bf" opacity="0.92"/>
+<rect x="1052.0" y="208" width="5.9" height="24" rx="1.5" fill="#2dd4bf" opacity="0.92"/>
+<rect x="1059.0" y="208" width="5.9" height="24" rx="1.5" fill="#f6b26b" opacity="1"/>
+<rect x="1066.0" y="208" width="5.9" height="24" rx="1.5" fill="#2dd4bf" opacity="0.92"/>
+<rect x="1073.0" y="208" width="5.9" height="24" rx="1.5" fill="#2dd4bf" opacity="0.92"/>
+<rect x="1080.0" y="208" width="5.9" height="24" rx="1.5" fill="#2dd4bf" opacity="0.92"/>
+<rect x="1087.0" y="208" width="5.9" height="24" rx="1.5" fill="#f6b26b" opacity="1"/>
+<rect x="1094.0" y="208" width="5.9" height="24" rx="1.5" fill="#2dd4bf" opacity="0.92"/>
+<rect x="1101.0" y="208" width="5.9" height="24" rx="1.5" fill="#2dd4bf" opacity="0.92"/>
+<rect x="1108.0" y="208" width="5.9" height="24" rx="1.5" fill="#2dd4bf" opacity="0.92"/>
+<rect x="1115.0" y="208" width="5.9" height="24" rx="1.5" fill="#f6b26b" opacity="1"/>
+<rect x="1122.0" y="208" width="5.9" height="24" rx="1.5" fill="#2dd4bf" opacity="0.92"/>
+<rect x="1129.0" y="208" width="5.9" height="24" rx="1.5" fill="#2dd4bf" opacity="0.92"/>
+<rect x="1136.0" y="208" width="5.9" height="24" rx="1.5" fill="#2dd4bf" opacity="0.92"/>
+<rect x="1143.0" y="208" width="5.9" height="24" rx="1.5" fill="#f6b26b" opacity="1"/>
+<rect x="1150.0" y="208" width="5.9" height="24" rx="1.5" fill="#2dd4bf" opacity="0.92"/>
+<rect x="1157.0" y="208" width="5.9" height="24" rx="1.5" fill="#2dd4bf" opacity="0.92"/>
+<rect x="1164.0" y="208" width="5.9" height="24" rx="1.5" fill="#2dd4bf" opacity="0.92"/>
+<rect x="1171.0" y="208" width="5.9" height="24" rx="1.5" fill="#f6b26b" opacity="1"/>
+<rect x="1178.0" y="208" width="5.9" height="24" rx="1.5" fill="#2dd4bf" opacity="0.92"/>
+<rect x="1185.0" y="208" width="5.9" height="24" rx="1.5" fill="#2dd4bf" opacity="0.92"/>
+<rect x="1192.0" y="208" width="5.9" height="24" rx="1.5" fill="#2dd4bf" opacity="0.92"/>
+<rect x="1199.0" y="208" width="5.9" height="24" rx="1.5" fill="#f6b26b" opacity="1"/>
+<rect x="1206.0" y="208" width="5.9" height="24" rx="1.5" fill="#2dd4bf" opacity="0.92"/>
+<rect x="1213.0" y="208" width="5.9" height="24" rx="1.5" fill="#2dd4bf" opacity="0.92"/>
+<rect x="1220.0" y="208" width="5.9" height="24" rx="1.5" fill="#2dd4bf" opacity="0.92"/>
+<rect x="1227.0" y="208" width="5.9" height="24" rx="1.5" fill="#f6b26b" opacity="1"/>
+<rect x="1234.0" y="208" width="5.9" height="24" rx="1.5" fill="#2dd4bf" opacity="0.92"/>
+<rect x="1241.0" y="208" width="5.9" height="24" rx="1.5" fill="#2dd4bf" opacity="0.92"/>
+<rect x="1248.0" y="208" width="5.9" height="24" rx="1.5" fill="#2dd4bf" opacity="0.92"/>
+<rect x="1255.0" y="208" width="5.9" height="24" rx="1.5" fill="#f6b26b" opacity="1"/>
+<rect x="1262.0" y="208" width="5.9" height="24" rx="1.5" fill="#2dd4bf" opacity="0.92"/>
+<rect x="1269.0" y="208" width="5.9" height="24" rx="1.5" fill="#2dd4bf" opacity="0.92"/>
+<rect x="1276.0" y="208" width="5.9" height="24" rx="1.5" fill="#2dd4bf" opacity="0.92"/>
+<rect x="1283.0" y="208" width="5.9" height="24" rx="1.5" fill="#f6b26b" opacity="1"/>
+<rect x="1290.0" y="208" width="5.9" height="24" rx="1.5" fill="#2dd4bf" opacity="0.92"/>
+<rect x="1297.0" y="208" width="5.9" height="24" rx="1.5" fill="#2dd4bf" opacity="0.92"/>
+<rect x="1304.0" y="208" width="5.9" height="24" rx="1.5" fill="#2dd4bf" opacity="0.92"/>
+<rect x="1311.0" y="208" width="5.9" height="24" rx="1.5" fill="#f6b26b" opacity="1"/>
+<rect x="1318.0" y="208" width="5.9" height="24" rx="1.5" fill="#2dd4bf" opacity="0.92"/>
+<rect x="1325.0" y="208" width="5.9" height="24" rx="1.5" fill="#2dd4bf" opacity="0.92"/>
+<rect x="1332.0" y="208" width="5.9" height="24" rx="1.5" fill="#2dd4bf" opacity="0.92"/>
+<rect x="1339.0" y="208" width="5.9" height="24" rx="1.5" fill="#f6b26b" opacity="1"/>
+<rect x="1346.0" y="208" width="5.9" height="24" rx="1.5" fill="#2dd4bf" opacity="0.92"/>
+<rect x="1353.0" y="208" width="5.9" height="24" rx="1.5" fill="#2dd4bf" opacity="0.92"/>
+<rect x="1360.0" y="208" width="5.9" height="24" rx="1.5" fill="#2dd4bf" opacity="0.92"/>
+<rect x="1367.0" y="208" width="5.9" height="24" rx="1.5" fill="#f6b26b" opacity="1"/>
+<rect x="1374.0" y="208" width="5.9" height="24" rx="1.5" fill="#2dd4bf" opacity="0.92"/>
+<rect x="1381.0" y="208" width="5.9" height="24" rx="1.5" fill="#2dd4bf" opacity="0.92"/>
+<rect x="1388.0" y="208" width="5.9" height="24" rx="1.5" fill="#2dd4bf" opacity="0.92"/>
+<rect x="1395.0" y="208" width="5.9" height="24" rx="1.5" fill="#f6b26b" opacity="1"/>
+<rect x="1402.0" y="208" width="5.9" height="24" rx="1.5" fill="#2dd4bf" opacity="0.92"/>
+<rect x="1409.0" y="208" width="5.9" height="24" rx="1.5" fill="#2dd4bf" opacity="0.92"/>
+<rect x="1416.0" y="208" width="5.9" height="24" rx="1.5" fill="#2dd4bf" opacity="0.92"/>
+<rect x="1423.0" y="208" width="5.9" height="24" rx="1.5" fill="#f6b26b" opacity="1"/>
+<rect x="1430.0" y="208" width="5.9" height="24" rx="1.5" fill="#2dd4bf" opacity="0.92"/>
+<rect x="1437.0" y="208" width="5.9" height="24" rx="1.5" fill="#2dd4bf" opacity="0.92"/>
+<rect x="1444.0" y="208" width="5.9" height="24" rx="1.5" fill="#2dd4bf" opacity="0.92"/>
+<rect x="1451.0" y="208" width="5.9" height="24" rx="1.5" fill="#f6b26b" opacity="1"/>
+<rect x="1458.0" y="208" width="5.9" height="24" rx="1.5" fill="#2dd4bf" opacity="0.92"/>
+<rect x="1465.0" y="208" width="5.9" height="24" rx="1.5" fill="#2dd4bf" opacity="0.92"/>
+<rect x="1472.0" y="208" width="5.9" height="24" rx="1.5" fill="#2dd4bf" opacity="0.92"/>
+<rect x="1479.0" y="208" width="5.9" height="24" rx="1.5" fill="#f6b26b" opacity="1"/>
+<rect x="1486.0" y="208" width="5.9" height="24" rx="1.5" fill="#2dd4bf" opacity="0.92"/>
+<rect x="1493.0" y="208" width="5.9" height="24" rx="1.5" fill="#2dd4bf" opacity="0.92"/>
+<rect x="1500.0" y="208" width="5.9" height="24" rx="1.5" fill="#2dd4bf" opacity="0.92"/>
+<rect x="1507.0" y="208" width="5.9" height="24" rx="1.5" fill="#f6b26b" opacity="1"/>
+<rect x="1514.0" y="208" width="5.9" height="24" rx="1.5" fill="#2dd4bf" opacity="0.92"/>
+<rect x="1521.0" y="208" width="5.9" height="24" rx="1.5" fill="#2dd4bf" opacity="0.92"/>
+<rect x="1528.0" y="208" width="5.9" height="24" rx="1.5" fill="#2dd4bf" opacity="0.92"/>
+<rect x="1535.0" y="208" width="5.9" height="24" rx="1.5" fill="#f6b26b" opacity="1"/>
+<text x="836.0" y="224.0" font-family="SF Mono, SFMono-Regular, Menlo, Consolas, monospace" font-size="11.5" fill="#61738f" font-weight="500" text-anchor="start">Attn</text>
+<rect x="898.0" y="235" width="5.9" height="24" rx="1.5" fill="#5c6d88" opacity="0.7"/>
+<rect x="905.0" y="235" width="5.9" height="24" rx="1.5" fill="#5c6d88" opacity="0.7"/>
+<rect x="912.0" y="235" width="5.9" height="24" rx="1.5" fill="#5c6d88" opacity="0.7"/>
+<rect x="919.0" y="235" width="5.9" height="24" rx="1.5" fill="#a78bfa" opacity="0.9"/>
+<rect x="926.0" y="235" width="5.9" height="24" rx="1.5" fill="#a78bfa" opacity="0.9"/>
+<rect x="933.0" y="235" width="5.9" height="24" rx="1.5" fill="#a78bfa" opacity="0.9"/>
+<rect x="940.0" y="235" width="5.9" height="24" rx="1.5" fill="#a78bfa" opacity="0.9"/>
+<rect x="947.0" y="235" width="5.9" height="24" rx="1.5" fill="#a78bfa" opacity="0.9"/>
+<rect x="954.0" y="235" width="5.9" height="24" rx="1.5" fill="#a78bfa" opacity="0.9"/>
+<rect x="961.0" y="235" width="5.9" height="24" rx="1.5" fill="#a78bfa" opacity="0.9"/>
+<rect x="968.0" y="235" width="5.9" height="24" rx="1.5" fill="#a78bfa" opacity="0.9"/>
+<rect x="975.0" y="235" width="5.9" height="24" rx="1.5" fill="#a78bfa" opacity="0.9"/>
+<rect x="982.0" y="235" width="5.9" height="24" rx="1.5" fill="#a78bfa" opacity="0.9"/>
+<rect x="989.0" y="235" width="5.9" height="24" rx="1.5" fill="#a78bfa" opacity="0.9"/>
+<rect x="996.0" y="235" width="5.9" height="24" rx="1.5" fill="#a78bfa" opacity="0.9"/>
+<rect x="1003.0" y="235" width="5.9" height="24" rx="1.5" fill="#a78bfa" opacity="0.9"/>
+<rect x="1010.0" y="235" width="5.9" height="24" rx="1.5" fill="#a78bfa" opacity="0.9"/>
+<rect x="1017.0" y="235" width="5.9" height="24" rx="1.5" fill="#a78bfa" opacity="0.9"/>
+<rect x="1024.0" y="235" width="5.9" height="24" rx="1.5" fill="#a78bfa" opacity="0.9"/>
+<rect x="1031.0" y="235" width="5.9" height="24" rx="1.5" fill="#a78bfa" opacity="0.9"/>
+<rect x="1038.0" y="235" width="5.9" height="24" rx="1.5" fill="#a78bfa" opacity="0.9"/>
+<rect x="1045.0" y="235" width="5.9" height="24" rx="1.5" fill="#a78bfa" opacity="0.9"/>
+<rect x="1052.0" y="235" width="5.9" height="24" rx="1.5" fill="#a78bfa" opacity="0.9"/>
+<rect x="1059.0" y="235" width="5.9" height="24" rx="1.5" fill="#a78bfa" opacity="0.9"/>
+<rect x="1066.0" y="235" width="5.9" height="24" rx="1.5" fill="#a78bfa" opacity="0.9"/>
+<rect x="1073.0" y="235" width="5.9" height="24" rx="1.5" fill="#a78bfa" opacity="0.9"/>
+<rect x="1080.0" y="235" width="5.9" height="24" rx="1.5" fill="#a78bfa" opacity="0.9"/>
+<rect x="1087.0" y="235" width="5.9" height="24" rx="1.5" fill="#a78bfa" opacity="0.9"/>
+<rect x="1094.0" y="235" width="5.9" height="24" rx="1.5" fill="#a78bfa" opacity="0.9"/>
+<rect x="1101.0" y="235" width="5.9" height="24" rx="1.5" fill="#a78bfa" opacity="0.9"/>
+<rect x="1108.0" y="235" width="5.9" height="24" rx="1.5" fill="#a78bfa" opacity="0.9"/>
+<rect x="1115.0" y="235" width="5.9" height="24" rx="1.5" fill="#a78bfa" opacity="0.9"/>
+<rect x="1122.0" y="235" width="5.9" height="24" rx="1.5" fill="#a78bfa" opacity="0.9"/>
+<rect x="1129.0" y="235" width="5.9" height="24" rx="1.5" fill="#a78bfa" opacity="0.9"/>
+<rect x="1136.0" y="235" width="5.9" height="24" rx="1.5" fill="#a78bfa" opacity="0.9"/>
+<rect x="1143.0" y="235" width="5.9" height="24" rx="1.5" fill="#a78bfa" opacity="0.9"/>
+<rect x="1150.0" y="235" width="5.9" height="24" rx="1.5" fill="#a78bfa" opacity="0.9"/>
+<rect x="1157.0" y="235" width="5.9" height="24" rx="1.5" fill="#a78bfa" opacity="0.9"/>
+<rect x="1164.0" y="235" width="5.9" height="24" rx="1.5" fill="#a78bfa" opacity="0.9"/>
+<rect x="1171.0" y="235" width="5.9" height="24" rx="1.5" fill="#a78bfa" opacity="0.9"/>
+<rect x="1178.0" y="235" width="5.9" height="24" rx="1.5" fill="#a78bfa" opacity="0.9"/>
+<rect x="1185.0" y="235" width="5.9" height="24" rx="1.5" fill="#a78bfa" opacity="0.9"/>
+<rect x="1192.0" y="235" width="5.9" height="24" rx="1.5" fill="#a78bfa" opacity="0.9"/>
+<rect x="1199.0" y="235" width="5.9" height="24" rx="1.5" fill="#a78bfa" opacity="0.9"/>
+<rect x="1206.0" y="235" width="5.9" height="24" rx="1.5" fill="#a78bfa" opacity="0.9"/>
+<rect x="1213.0" y="235" width="5.9" height="24" rx="1.5" fill="#a78bfa" opacity="0.9"/>
+<rect x="1220.0" y="235" width="5.9" height="24" rx="1.5" fill="#a78bfa" opacity="0.9"/>
+<rect x="1227.0" y="235" width="5.9" height="24" rx="1.5" fill="#a78bfa" opacity="0.9"/>
+<rect x="1234.0" y="235" width="5.9" height="24" rx="1.5" fill="#a78bfa" opacity="0.9"/>
+<rect x="1241.0" y="235" width="5.9" height="24" rx="1.5" fill="#a78bfa" opacity="0.9"/>
+<rect x="1248.0" y="235" width="5.9" height="24" rx="1.5" fill="#a78bfa" opacity="0.9"/>
+<rect x="1255.0" y="235" width="5.9" height="24" rx="1.5" fill="#a78bfa" opacity="0.9"/>
+<rect x="1262.0" y="235" width="5.9" height="24" rx="1.5" fill="#a78bfa" opacity="0.9"/>
+<rect x="1269.0" y="235" width="5.9" height="24" rx="1.5" fill="#a78bfa" opacity="0.9"/>
+<rect x="1276.0" y="235" width="5.9" height="24" rx="1.5" fill="#a78bfa" opacity="0.9"/>
+<rect x="1283.0" y="235" width="5.9" height="24" rx="1.5" fill="#a78bfa" opacity="0.9"/>
+<rect x="1290.0" y="235" width="5.9" height="24" rx="1.5" fill="#a78bfa" opacity="0.9"/>
+<rect x="1297.0" y="235" width="5.9" height="24" rx="1.5" fill="#a78bfa" opacity="0.9"/>
+<rect x="1304.0" y="235" width="5.9" height="24" rx="1.5" fill="#a78bfa" opacity="0.9"/>
+<rect x="1311.0" y="235" width="5.9" height="24" rx="1.5" fill="#a78bfa" opacity="0.9"/>
+<rect x="1318.0" y="235" width="5.9" height="24" rx="1.5" fill="#a78bfa" opacity="0.9"/>
+<rect x="1325.0" y="235" width="5.9" height="24" rx="1.5" fill="#a78bfa" opacity="0.9"/>
+<rect x="1332.0" y="235" width="5.9" height="24" rx="1.5" fill="#a78bfa" opacity="0.9"/>
+<rect x="1339.0" y="235" width="5.9" height="24" rx="1.5" fill="#a78bfa" opacity="0.9"/>
+<rect x="1346.0" y="235" width="5.9" height="24" rx="1.5" fill="#a78bfa" opacity="0.9"/>
+<rect x="1353.0" y="235" width="5.9" height="24" rx="1.5" fill="#a78bfa" opacity="0.9"/>
+<rect x="1360.0" y="235" width="5.9" height="24" rx="1.5" fill="#a78bfa" opacity="0.9"/>
+<rect x="1367.0" y="235" width="5.9" height="24" rx="1.5" fill="#a78bfa" opacity="0.9"/>
+<rect x="1374.0" y="235" width="5.9" height="24" rx="1.5" fill="#a78bfa" opacity="0.9"/>
+<rect x="1381.0" y="235" width="5.9" height="24" rx="1.5" fill="#a78bfa" opacity="0.9"/>
+<rect x="1388.0" y="235" width="5.9" height="24" rx="1.5" fill="#a78bfa" opacity="0.9"/>
+<rect x="1395.0" y="235" width="5.9" height="24" rx="1.5" fill="#a78bfa" opacity="0.9"/>
+<rect x="1402.0" y="235" width="5.9" height="24" rx="1.5" fill="#a78bfa" opacity="0.9"/>
+<rect x="1409.0" y="235" width="5.9" height="24" rx="1.5" fill="#a78bfa" opacity="0.9"/>
+<rect x="1416.0" y="235" width="5.9" height="24" rx="1.5" fill="#a78bfa" opacity="0.9"/>
+<rect x="1423.0" y="235" width="5.9" height="24" rx="1.5" fill="#a78bfa" opacity="0.9"/>
+<rect x="1430.0" y="235" width="5.9" height="24" rx="1.5" fill="#a78bfa" opacity="0.9"/>
+<rect x="1437.0" y="235" width="5.9" height="24" rx="1.5" fill="#a78bfa" opacity="0.9"/>
+<rect x="1444.0" y="235" width="5.9" height="24" rx="1.5" fill="#a78bfa" opacity="0.9"/>
+<rect x="1451.0" y="235" width="5.9" height="24" rx="1.5" fill="#a78bfa" opacity="0.9"/>
+<rect x="1458.0" y="235" width="5.9" height="24" rx="1.5" fill="#a78bfa" opacity="0.9"/>
+<rect x="1465.0" y="235" width="5.9" height="24" rx="1.5" fill="#a78bfa" opacity="0.9"/>
+<rect x="1472.0" y="235" width="5.9" height="24" rx="1.5" fill="#a78bfa" opacity="0.9"/>
+<rect x="1479.0" y="235" width="5.9" height="24" rx="1.5" fill="#a78bfa" opacity="0.9"/>
+<rect x="1486.0" y="235" width="5.9" height="24" rx="1.5" fill="#a78bfa" opacity="0.9"/>
+<rect x="1493.0" y="235" width="5.9" height="24" rx="1.5" fill="#a78bfa" opacity="0.9"/>
+<rect x="1500.0" y="235" width="5.9" height="24" rx="1.5" fill="#a78bfa" opacity="0.9"/>
+<rect x="1507.0" y="235" width="5.9" height="24" rx="1.5" fill="#a78bfa" opacity="0.9"/>
+<rect x="1514.0" y="235" width="5.9" height="24" rx="1.5" fill="#a78bfa" opacity="0.9"/>
+<rect x="1521.0" y="235" width="5.9" height="24" rx="1.5" fill="#a78bfa" opacity="0.9"/>
+<rect x="1528.0" y="235" width="5.9" height="24" rx="1.5" fill="#a78bfa" opacity="0.9"/>
+<rect x="1535.0" y="235" width="5.9" height="24" rx="1.5" fill="#5c6d88" opacity="0.7"/>
+<text x="836.0" y="251.0" font-family="SF Mono, SFMono-Regular, Menlo, Consolas, monospace" font-size="11.5" fill="#61738f" font-weight="500" text-anchor="start">FFN</text>
+<line x1="901.0" y1="262.0" x2="901.0" y2="267.0" stroke="#3a4c68" stroke-width="1" opacity="1.0"/>
+<text x="901.0" y="280.0" font-family="SF Mono, SFMono-Regular, Menlo, Consolas, monospace" font-size="10.5" fill="#61738f" font-weight="400" text-anchor="middle">L0</text>
+<line x1="1062.0" y1="262.0" x2="1062.0" y2="267.0" stroke="#3a4c68" stroke-width="1" opacity="1.0"/>
+<text x="1062.0" y="280.0" font-family="SF Mono, SFMono-Regular, Menlo, Consolas, monospace" font-size="10.5" fill="#61738f" font-weight="400" text-anchor="middle">L23</text>
+<line x1="1223.0" y1="262.0" x2="1223.0" y2="267.0" stroke="#3a4c68" stroke-width="1" opacity="1.0"/>
+<text x="1223.0" y="280.0" font-family="SF Mono, SFMono-Regular, Menlo, Consolas, monospace" font-size="10.5" fill="#61738f" font-weight="400" text-anchor="middle">L46</text>
+<line x1="1384.0" y1="262.0" x2="1384.0" y2="267.0" stroke="#3a4c68" stroke-width="1" opacity="1.0"/>
+<text x="1384.0" y="280.0" font-family="SF Mono, SFMono-Regular, Menlo, Consolas, monospace" font-size="10.5" fill="#61738f" font-weight="400" text-anchor="middle">L69</text>
+<line x1="1538.0" y1="262.0" x2="1538.0" y2="267.0" stroke="#3a4c68" stroke-width="1" opacity="1.0"/>
+<text x="1538.0" y="280.0" font-family="SF Mono, SFMono-Regular, Menlo, Consolas, monospace" font-size="10.5" fill="#61738f" font-weight="400" text-anchor="middle">L91</text>
+<rect x="836.0" y="294.0" width="9" height="9" rx="2" fill="#2dd4bf"/>
+<text x="850.0" y="302.0" font-family="Helvetica Neue, SF Pro Text, PingFang SC, Hiragino Sans GB, Arial, sans-serif" font-size="11.5" fill="#95a7c4" font-weight="400" text-anchor="start">Gated SWA × 69</text>
+<rect x="953.4" y="294.0" width="9" height="9" rx="2" fill="#f6b26b"/>
+<text x="967.4" y="302.0" font-family="Helvetica Neue, SF Pro Text, PingFang SC, Hiragino Sans GB, Arial, sans-serif" font-size="11.5" fill="#95a7c4" font-weight="400" text-anchor="start">Sparse GQA × 23</text>
+<rect x="1077.2" y="294.0" width="9" height="9" rx="2" fill="#a78bfa"/>
+<text x="1091.2" y="302.0" font-family="Helvetica Neue, SF Pro Text, PingFang SC, Hiragino Sans GB, Arial, sans-serif" font-size="11.5" fill="#95a7c4" font-weight="400" text-anchor="start">MoE × 88</text>
+<rect x="1157.7" y="294.0" width="9" height="9" rx="2" fill="#5c6d88"/>
+<text x="1171.7" y="302.0" font-family="Helvetica Neue, SF Pro Text, PingFang SC, Hiragino Sans GB, Arial, sans-serif" font-size="11.5" fill="#95a7c4" font-weight="400" text-anchor="start">Dense × 4</text>
+<rect x="836.0" y="320.0" width="168.0" height="136.0" rx="12" fill="#0e1727" stroke="#212f47" stroke-width="1.2"/>
+<rect x="836.0" y="320" width="168" height="3" rx="1.5" fill="#2dd4bf"/>
+<text x="850.0" y="347.0" font-family="SF Mono, SFMono-Regular, Menlo, Consolas, monospace" font-size="13.5" fill="#e9eefb" font-weight="600" text-anchor="start">L 4k + 0</text>
+<rect x="850.0" y="355.0" width="59.2" height="19" rx="9.5" fill="#2dd4bf" opacity="0.13"/>
+<rect x="850.0" y="355.0" width="59.2" height="19" rx="9.5" fill="none" stroke="#2dd4bf" stroke-width="0.9" opacity="0.55"/>
+<text x="858.0" y="368.5" font-family="Helvetica Neue, SF Pro Text, PingFang SC, Hiragino Sans GB, Arial, sans-serif" font-size="11" fill="#2dd4bf" font-weight="600" text-anchor="start">Sliding</text>
+<text x="850.0" y="398.0" font-family="Helvetica Neue, SF Pro Text, PingFang SC, Hiragino Sans GB, Arial, sans-serif" font-size="11.6" fill="#95a7c4" font-weight="400" text-anchor="start">SWA 窗口 512</text>
+<text x="850.0" y="419.0" font-family="Helvetica Neue, SF Pro Text, PingFang SC, Hiragino Sans GB, Arial, sans-serif" font-size="11.6" fill="#95a7c4" font-weight="400" text-anchor="start">RoPE 全维 θ = 1e4</text>
+<text x="850.0" y="440.0" font-family="Helvetica Neue, SF Pro Text, PingFang SC, Hiragino Sans GB, Arial, sans-serif" font-size="11.6" fill="#a78bfa" font-weight="500" text-anchor="start">FFN：MoE</text>
+<rect x="1016.0" y="320.0" width="168.0" height="136.0" rx="12" fill="#0e1727" stroke="#212f47" stroke-width="1.2"/>
+<rect x="1016.0" y="320" width="168" height="3" rx="1.5" fill="#2dd4bf"/>
+<text x="1030.0" y="347.0" font-family="SF Mono, SFMono-Regular, Menlo, Consolas, monospace" font-size="13.5" fill="#e9eefb" font-weight="600" text-anchor="start">L 4k + 1</text>
+<rect x="1030.0" y="355.0" width="59.2" height="19" rx="9.5" fill="#2dd4bf" opacity="0.13"/>
+<rect x="1030.0" y="355.0" width="59.2" height="19" rx="9.5" fill="none" stroke="#2dd4bf" stroke-width="0.9" opacity="0.55"/>
+<text x="1038.0" y="368.5" font-family="Helvetica Neue, SF Pro Text, PingFang SC, Hiragino Sans GB, Arial, sans-serif" font-size="11" fill="#2dd4bf" font-weight="600" text-anchor="start">Sliding</text>
+<text x="1030.0" y="398.0" font-family="Helvetica Neue, SF Pro Text, PingFang SC, Hiragino Sans GB, Arial, sans-serif" font-size="11.6" fill="#95a7c4" font-weight="400" text-anchor="start">SWA 窗口 512</text>
+<text x="1030.0" y="419.0" font-family="Helvetica Neue, SF Pro Text, PingFang SC, Hiragino Sans GB, Arial, sans-serif" font-size="11.6" fill="#95a7c4" font-weight="400" text-anchor="start">RoPE 全维 θ = 1e4</text>
+<text x="1030.0" y="440.0" font-family="Helvetica Neue, SF Pro Text, PingFang SC, Hiragino Sans GB, Arial, sans-serif" font-size="11.6" fill="#a78bfa" font-weight="500" text-anchor="start">FFN：MoE</text>
+<rect x="1196.0" y="320.0" width="168.0" height="136.0" rx="12" fill="#0e1727" stroke="#212f47" stroke-width="1.2"/>
+<rect x="1196.0" y="320" width="168" height="3" rx="1.5" fill="#2dd4bf"/>
+<text x="1210.0" y="347.0" font-family="SF Mono, SFMono-Regular, Menlo, Consolas, monospace" font-size="13.5" fill="#e9eefb" font-weight="600" text-anchor="start">L 4k + 2</text>
+<rect x="1210.0" y="355.0" width="59.2" height="19" rx="9.5" fill="#2dd4bf" opacity="0.13"/>
+<rect x="1210.0" y="355.0" width="59.2" height="19" rx="9.5" fill="none" stroke="#2dd4bf" stroke-width="0.9" opacity="0.55"/>
+<text x="1218.0" y="368.5" font-family="Helvetica Neue, SF Pro Text, PingFang SC, Hiragino Sans GB, Arial, sans-serif" font-size="11" fill="#2dd4bf" font-weight="600" text-anchor="start">Sliding</text>
+<text x="1210.0" y="398.0" font-family="Helvetica Neue, SF Pro Text, PingFang SC, Hiragino Sans GB, Arial, sans-serif" font-size="11.6" fill="#95a7c4" font-weight="400" text-anchor="start">SWA 窗口 512</text>
+<text x="1210.0" y="419.0" font-family="Helvetica Neue, SF Pro Text, PingFang SC, Hiragino Sans GB, Arial, sans-serif" font-size="11.6" fill="#95a7c4" font-weight="400" text-anchor="start">RoPE 全维 θ = 1e4</text>
+<text x="1210.0" y="440.0" font-family="Helvetica Neue, SF Pro Text, PingFang SC, Hiragino Sans GB, Arial, sans-serif" font-size="11.6" fill="#a78bfa" font-weight="500" text-anchor="start">FFN：MoE</text>
+<rect x="1376.0" y="320.0" width="168.0" height="136.0" rx="12" fill="#0e1727" stroke="#212f47" stroke-width="1.2"/>
+<rect x="1376.0" y="320" width="168" height="3" rx="1.5" fill="#f6b26b"/>
+<text x="1390.0" y="347.0" font-family="SF Mono, SFMono-Regular, Menlo, Consolas, monospace" font-size="13.5" fill="#e9eefb" font-weight="600" text-anchor="start">L 4k + 3</text>
+<rect x="1390.0" y="355.0" width="81.6" height="19" rx="9.5" fill="#f6b26b" opacity="0.13"/>
+<rect x="1390.0" y="355.0" width="81.6" height="19" rx="9.5" fill="none" stroke="#f6b26b" stroke-width="0.9" opacity="0.55"/>
+<text x="1398.0" y="368.5" font-family="Helvetica Neue, SF Pro Text, PingFang SC, Hiragino Sans GB, Arial, sans-serif" font-size="11" fill="#f6b26b" font-weight="600" text-anchor="start">Sparse Full</text>
+<text x="1390.0" y="398.0" font-family="Helvetica Neue, SF Pro Text, PingFang SC, Hiragino Sans GB, Arial, sans-serif" font-size="11.6" fill="#95a7c4" font-weight="400" text-anchor="start">top-512 块 ≈ 4096 token</text>
+<text x="1390.0" y="419.0" font-family="Helvetica Neue, SF Pro Text, PingFang SC, Hiragino Sans GB, Arial, sans-serif" font-size="11.6" fill="#95a7c4" font-weight="400" text-anchor="start">局部 RoPE 64/192</text>
+<text x="1390.0" y="440.0" font-family="Helvetica Neue, SF Pro Text, PingFang SC, Hiragino Sans GB, Arial, sans-serif" font-size="11.6" fill="#a78bfa" font-weight="500" text-anchor="start">FFN：MoE</text>
+<text x="836.0" y="478.0" font-family="Helvetica Neue, SF Pro Text, PingFang SC, Hiragino Sans GB, Arial, sans-serif" font-size="11.6" fill="#61738f" font-weight="400" text-anchor="start">例外：L0–L2 与 L91 的 FFN 换成 13824 稠密 MLP（4 层，0.68 B）；注意力仍是 3:1</text>
+<text x="1199.0" y="502.0" font-family="Helvetica Neue, SF Pro Text, PingFang SC, Hiragino Sans GB, Arial, sans-serif" font-size="12.5" fill="#61738f" font-weight="600" text-anchor="middle">单层内部（L3–L90，MoE 层）</text>
+<rect x="1096.0" y="514.0" width="206.0" height="28.0" rx="14" fill="#16233a" stroke="#334764" stroke-width="1.2"/>
+<text x="1199.0" y="533.0" font-family="Helvetica Neue, SF Pro Text, PingFang SC, Hiragino Sans GB, Arial, sans-serif" font-size="12" fill="#95a7c4" font-weight="500" text-anchor="middle">输入 x（hidden 4096）</text>
+<line x1="1199.0" y1="542.0" x2="1199.0" y2="556.0" stroke="#3d5170" stroke-width="1.6" opacity="1.0"/>
+<polygon points="1199.0,556.0 1202.4,548.5 1195.6,548.5" fill="#3d5170"/>
+<rect x="1034.0" y="556.0" width="330.0" height="30.0" rx="10" fill="#0e1727" stroke="#212f47" stroke-width="1.2"/>
+<rect x="1034.0" y="556.0" width="3.5" height="30" rx="1.5" fill="#2dd4bf" opacity="0.9"/>
+<text x="1049.0" y="575.5" font-family="Helvetica Neue, SF Pro Text, PingFang SC, Hiragino Sans GB, Arial, sans-serif" font-size="14" fill="#e9eefb" font-weight="600" text-anchor="start">RMSNorm</text>
+<line x1="1199.0" y1="586.0" x2="1199.0" y2="598.0" stroke="#3d5170" stroke-width="1.6" opacity="1.0"/>
+<polygon points="1199.0,598.0 1202.4,590.5 1195.6,590.5" fill="#3d5170"/>
+<rect x="1034.0" y="598.0" width="330.0" height="58.0" rx="10" fill="#0e1727" stroke="#212f47" stroke-width="1.2"/>
+<rect x="1034.0" y="598.0" width="3.5" height="58" rx="1.5" fill="#2dd4bf" opacity="0.9"/>
+<text x="1049.0" y="620.0" font-family="Helvetica Neue, SF Pro Text, PingFang SC, Hiragino Sans GB, Arial, sans-serif" font-size="14.5" fill="#e9eefb" font-weight="600" text-anchor="start">Self-Attention</text>
+<text x="1049.0" y="638.0" font-family="Helvetica Neue, SF Pro Text, PingFang SC, Hiragino Sans GB, Arial, sans-serif" font-size="11.0" fill="#61738f" font-weight="400" text-anchor="start">GQA 64 Q / 4 KV · head_dim 192 · 每 head 门控</text>
+<line x1="1199.0" y1="656.0" x2="1199.0" y2="668.0" stroke="#3d5170" stroke-width="1.6" opacity="1.0"/>
+<polygon points="1199.0,668.0 1202.4,660.5 1195.6,660.5" fill="#3d5170"/>
+<rect x="1096.0" y="668.0" width="206.0" height="26.0" rx="13" fill="#16233a" stroke="#334764" stroke-width="1.2"/>
+<text x="1199.0" y="686.0" font-family="Helvetica Neue, SF Pro Text, PingFang SC, Hiragino Sans GB, Arial, sans-serif" font-size="11.8" fill="#95a7c4" font-weight="500" text-anchor="middle">＋ 残差（FP32）</text>
+<line x1="1199.0" y1="694.0" x2="1199.0" y2="706.0" stroke="#3d5170" stroke-width="1.6" opacity="1.0"/>
+<polygon points="1199.0,706.0 1202.4,698.5 1195.6,698.5" fill="#3d5170"/>
+<rect x="1034.0" y="706.0" width="330.0" height="30.0" rx="10" fill="#0e1727" stroke="#212f47" stroke-width="1.2"/>
+<rect x="1034.0" y="706.0" width="3.5" height="30" rx="1.5" fill="#2dd4bf" opacity="0.9"/>
+<text x="1049.0" y="725.5" font-family="Helvetica Neue, SF Pro Text, PingFang SC, Hiragino Sans GB, Arial, sans-serif" font-size="14" fill="#e9eefb" font-weight="600" text-anchor="start">RMSNorm</text>
+<line x1="1199.0" y1="736.0" x2="1199.0" y2="748.0" stroke="#3d5170" stroke-width="1.6" opacity="1.0"/>
+<polygon points="1199.0,748.0 1202.4,740.5 1195.6,740.5" fill="#3d5170"/>
+<rect x="1034.0" y="748.0" width="330.0" height="58.0" rx="10" fill="#0e1727" stroke="#212f47" stroke-width="1.2"/>
+<rect x="1034.0" y="748.0" width="3.5" height="58" rx="1.5" fill="#a78bfa" opacity="0.9"/>
+<text x="1049.0" y="770.0" font-family="Helvetica Neue, SF Pro Text, PingFang SC, Hiragino Sans GB, Arial, sans-serif" font-size="14.5" fill="#e9eefb" font-weight="600" text-anchor="start">MoE / Dense FFN</text>
+<text x="1049.0" y="788.0" font-family="Helvetica Neue, SF Pro Text, PingFang SC, Hiragino Sans GB, Arial, sans-serif" font-size="11.0" fill="#61738f" font-weight="400" text-anchor="start">router → top-8 / 352 ＋ 共享专家</text>
+<line x1="1199.0" y1="806.0" x2="1199.0" y2="818.0" stroke="#3d5170" stroke-width="1.6" opacity="1.0"/>
+<polygon points="1199.0,818.0 1202.4,810.5 1195.6,810.5" fill="#3d5170"/>
+<rect x="1096.0" y="818.0" width="206.0" height="26.0" rx="13" fill="#16233a" stroke="#334764" stroke-width="1.2"/>
+<text x="1199.0" y="836.0" font-family="Helvetica Neue, SF Pro Text, PingFang SC, Hiragino Sans GB, Arial, sans-serif" font-size="11.8" fill="#95a7c4" font-weight="500" text-anchor="middle">＋ 残差（FP32）</text>
+<line x1="1199.0" y1="844.0" x2="1199.0" y2="856.0" stroke="#3d5170" stroke-width="1.6" opacity="1.0"/>
+<polygon points="1199.0,856.0 1202.4,848.5 1195.6,848.5" fill="#3d5170"/>
+<text x="1199.0" y="872.0" font-family="SF Mono, SFMono-Regular, Menlo, Consolas, monospace" font-size="12.5" fill="#95a7c4" font-weight="500" text-anchor="middle">→ 下一层</text>
+<text x="836.0" y="542.0" font-family="Helvetica Neue, SF Pro Text, PingFang SC, Hiragino Sans GB, Arial, sans-serif" font-size="12.5" fill="#5eead4" font-weight="600" text-anchor="start">为何 92 层</text>
+<text x="836.0" y="562.0" font-family="Helvetica Neue, SF Pro Text, PingFang SC, Hiragino Sans GB, Arial, sans-serif" font-size="10.9" fill="#61738f" font-weight="400" text-anchor="start">多跳推理需要层数堆叠，</text>
+<text x="836.0" y="579.0" font-family="Helvetica Neue, SF Pro Text, PingFang SC, Hiragino Sans GB, Arial, sans-serif" font-size="10.9" fill="#61738f" font-weight="400" text-anchor="start">公开对标千亿级深模型的层数</text>
+<text x="836.0" y="638.0" font-family="Helvetica Neue, SF Pro Text, PingFang SC, Hiragino Sans GB, Arial, sans-serif" font-size="12.5" fill="#5eead4" font-weight="600" text-anchor="start">MoE 位置</text>
+<text x="836.0" y="658.0" font-family="Helvetica Neue, SF Pro Text, PingFang SC, Hiragino Sans GB, Arial, sans-serif" font-size="10.9" fill="#61738f" font-weight="400" text-anchor="start">第 3–90 层共 88 层 MoE，</text>
+<text x="836.0" y="675.0" font-family="Helvetica Neue, SF Pro Text, PingFang SC, Hiragino Sans GB, Arial, sans-serif" font-size="10.9" fill="#61738f" font-weight="400" text-anchor="start">L0–L2 与 L91 为稠密 FFN</text>
+<text x="836.0" y="734.0" font-family="Helvetica Neue, SF Pro Text, PingFang SC, Hiragino Sans GB, Arial, sans-serif" font-size="12.5" fill="#5eead4" font-weight="600" text-anchor="start">数值稳定</text>
+<text x="836.0" y="754.0" font-family="Helvetica Neue, SF Pro Text, PingFang SC, Hiragino Sans GB, Arial, sans-serif" font-size="10.9" fill="#61738f" font-weight="400" text-anchor="start">hidden 与梯度走 FP32，</text>
+<text x="836.0" y="771.0" font-family="Helvetica Neue, SF Pro Text, PingFang SC, Hiragino Sans GB, Arial, sans-serif" font-size="10.9" fill="#61738f" font-weight="400" text-anchor="start">RMSNorm 的 γ 也存 FP32，</text>
+<text x="836.0" y="788.0" font-family="Helvetica Neue, SF Pro Text, PingFang SC, Hiragino Sans GB, Arial, sans-serif" font-size="10.9" fill="#61738f" font-weight="400" text-anchor="start">训练时做细粒度梯度裁剪</text>
+<rect x="836.0" y="886.0" width="704.0" height="152.0" rx="12" fill="#0e1727" stroke="#212f47" stroke-width="1.2"/>
+<circle cx="857.0" cy="907.0" r="4" fill="#2dd4bf"/>
+<text x="870.0" y="912.0" font-family="Helvetica Neue, SF Pro Text, PingFang SC, Hiragino Sans GB, Arial, sans-serif" font-size="14.5" fill="#e9eefb" font-weight="600" text-anchor="start">形状 / 精度速查（每 token · 每层）</text>
+<text x="850.0" y="940.0" font-family="SF Mono, SFMono-Regular, Menlo, Consolas, monospace" font-size="11.4" fill="#61738f" font-weight="400" text-anchor="start">hidden 4,096 ｜ FFN 13,824 ｜ MoE expert 1,536 ｜ vocab 128,896</text>
+<text x="850.0" y="964.0" font-family="Helvetica Neue, SF Pro Text, PingFang SC, Hiragino Sans GB, Arial, sans-serif" font-size="11.4" fill="#95a7c4" font-weight="400" text-anchor="start">GQA：4 个 KV head × 192 维 = 每层每 token 768 个 K/V 值（K、V 各 768）</text>
+<text x="850.0" y="988.0" font-family="Helvetica Neue, SF Pro Text, PingFang SC, Hiragino Sans GB, Arial, sans-serif" font-size="11.4" fill="#95a7c4" font-weight="400" text-anchor="start">KV cache：92 层全量 276 KiB/token；69 层滑窗截断后 ≈ 69 KiB/token（BF16）</text>
+<text x="850.0" y="1012.0" font-family="Helvetica Neue, SF Pro Text, PingFang SC, Hiragino Sans GB, Arial, sans-serif" font-size="11.4" fill="#61738f" font-weight="400" text-anchor="start">权重量化（config）：FP8 e4m3 · 128×128 分块 · 动态激活；另有 BF16 权重仓库</text>
+<rect x="1594.0" y="158.0" width="24" height="24" rx="7" fill="#f6b26b" opacity="0.16"/>
+<rect x="1594.0" y="158.0" width="24" height="24" rx="7" fill="none" stroke="#f6b26b" stroke-width="1" opacity="0.55"/>
+<text x="1605.5" y="174.5" font-family="SF Mono, SFMono-Regular, Menlo, Consolas, monospace" font-size="12.5" fill="#f6b26b" font-weight="700" text-anchor="middle">3</text>
+<text x="1628.0" y="175.5" font-family="Helvetica Neue, SF Pro Text, PingFang SC, Hiragino Sans GB, Arial, sans-serif" font-size="20.5" fill="#e9eefb" font-weight="600" text-anchor="start">注意力：GQA 底座 + 两条路径</text>
+<line x1="1594.0" y1="190.0" x2="2318.0" y2="190.0" stroke="#182640" stroke-width="1" opacity="1.0"/>
+<rect x="1594.0" y="206.0" width="724.0" height="94.0" rx="12" fill="#0e1727" stroke="#212f47" stroke-width="1.2"/>
+<circle cx="1615.0" cy="227.0" r="4" fill="#f6b26b"/>
+<text x="1628.0" y="232.0" font-family="Helvetica Neue, SF Pro Text, PingFang SC, Hiragino Sans GB, Arial, sans-serif" font-size="15.5" fill="#e9eefb" font-weight="600" text-anchor="start">GQA（92 层共用）</text>
+<text x="1608.0" y="256.0" font-family="Helvetica Neue, SF Pro Text, PingFang SC, Hiragino Sans GB, Arial, sans-serif" font-size="12.2" fill="#95a7c4" font-weight="400" text-anchor="start">64 个 Q head · 4 个 KV head（每 16 个 Q 共享 1 组 KV）· head_dim 192</text>
+<text x="1608.0" y="278.0" font-family="Helvetica Neue, SF Pro Text, PingFang SC, Hiragino Sans GB, Arial, sans-serif" font-size="12.2" fill="#95a7c4" font-weight="400" text-anchor="start">Q / K 各自 RMSNorm · 输出按 head 乘 sigmoid 门控（g_proj）</text>
+<rect x="2138.0" y="222" width="38" height="22" rx="5" fill="#2a2015" stroke="#f6b26b" stroke-width="0.9"/>
+<text x="2157.0" y="237.0" font-family="SF Mono, SFMono-Regular, Menlo, Consolas, monospace" font-size="10" fill="#f6b26b" font-weight="600" text-anchor="middle">16 Q</text>
+<line x1="2157.0" y1="244.0" x2="2157.0" y2="254.0" stroke="#8b6a3c" stroke-width="1" opacity="1.0"/>
+<polygon points="2157.0,254.0 2159.3,249.0 2154.8,249.0" fill="#8b6a3c"/>
+<rect x="2138.0" y="256" width="38" height="18" rx="5" fill="#0f2b2a" stroke="#2dd4bf" stroke-width="0.9"/>
+<text x="2157.0" y="269.0" font-family="SF Mono, SFMono-Regular, Menlo, Consolas, monospace" font-size="9.5" fill="#2dd4bf" font-weight="600" text-anchor="middle">KV</text>
+<rect x="2184.0" y="222" width="38" height="22" rx="5" fill="#2a2015" stroke="#f6b26b" stroke-width="0.9"/>
+<text x="2203.0" y="237.0" font-family="SF Mono, SFMono-Regular, Menlo, Consolas, monospace" font-size="10" fill="#f6b26b" font-weight="600" text-anchor="middle">16 Q</text>
+<line x1="2203.0" y1="244.0" x2="2203.0" y2="254.0" stroke="#8b6a3c" stroke-width="1" opacity="1.0"/>
+<polygon points="2203.0,254.0 2205.3,249.0 2200.8,249.0" fill="#8b6a3c"/>
+<rect x="2184.0" y="256" width="38" height="18" rx="5" fill="#0f2b2a" stroke="#2dd4bf" stroke-width="0.9"/>
+<text x="2203.0" y="269.0" font-family="SF Mono, SFMono-Regular, Menlo, Consolas, monospace" font-size="9.5" fill="#2dd4bf" font-weight="600" text-anchor="middle">KV</text>
+<rect x="2230.0" y="222" width="38" height="22" rx="5" fill="#2a2015" stroke="#f6b26b" stroke-width="0.9"/>
+<text x="2249.0" y="237.0" font-family="SF Mono, SFMono-Regular, Menlo, Consolas, monospace" font-size="10" fill="#f6b26b" font-weight="600" text-anchor="middle">16 Q</text>
+<line x1="2249.0" y1="244.0" x2="2249.0" y2="254.0" stroke="#8b6a3c" stroke-width="1" opacity="1.0"/>
+<polygon points="2249.0,254.0 2251.3,249.0 2246.8,249.0" fill="#8b6a3c"/>
+<rect x="2230.0" y="256" width="38" height="18" rx="5" fill="#0f2b2a" stroke="#2dd4bf" stroke-width="0.9"/>
+<text x="2249.0" y="269.0" font-family="SF Mono, SFMono-Regular, Menlo, Consolas, monospace" font-size="9.5" fill="#2dd4bf" font-weight="600" text-anchor="middle">KV</text>
+<rect x="2276.0" y="222" width="38" height="22" rx="5" fill="#2a2015" stroke="#f6b26b" stroke-width="0.9"/>
+<text x="2295.0" y="237.0" font-family="SF Mono, SFMono-Regular, Menlo, Consolas, monospace" font-size="10" fill="#f6b26b" font-weight="600" text-anchor="middle">16 Q</text>
+<line x1="2295.0" y1="244.0" x2="2295.0" y2="254.0" stroke="#8b6a3c" stroke-width="1" opacity="1.0"/>
+<polygon points="2295.0,254.0 2297.3,249.0 2292.8,249.0" fill="#8b6a3c"/>
+<rect x="2276.0" y="256" width="38" height="18" rx="5" fill="#0f2b2a" stroke="#2dd4bf" stroke-width="0.9"/>
+<text x="2295.0" y="269.0" font-family="SF Mono, SFMono-Regular, Menlo, Consolas, monospace" font-size="9.5" fill="#2dd4bf" font-weight="600" text-anchor="middle">KV</text>
+<text x="2138.0" y="288.0" font-family="SF Mono, SFMono-Regular, Menlo, Consolas, monospace" font-size="9.8" fill="#61738f" font-weight="400" text-anchor="start">64 Q → 4 KV</text>
+<rect x="1594.0" y="314.0" width="356.0" height="200.0" rx="12" fill="#0e1727" stroke="#1f3b45" stroke-width="1.2"/>
+<rect x="1594" y="314" width="356" height="3" rx="1.5" fill="#2dd4bf"/>
+<text x="1610.0" y="344.0" font-family="Helvetica Neue, SF Pro Text, PingFang SC, Hiragino Sans GB, Arial, sans-serif" font-size="15.5" fill="#e9eefb" font-weight="600" text-anchor="start">Gated Sliding Window</text>
+<rect x="1834.0" y="329.0" width="57.2" height="21" rx="10.5" fill="#2dd4bf" opacity="0.13"/>
+<rect x="1834.0" y="329.0" width="57.2" height="21" rx="10.5" fill="none" stroke="#2dd4bf" stroke-width="0.9" opacity="0.55"/>
+<text x="1843.0" y="343.6" font-family="Helvetica Neue, SF Pro Text, PingFang SC, Hiragino Sans GB, Arial, sans-serif" font-size="11.5" fill="#2dd4bf" font-weight="600" text-anchor="start">× 69 层</text>
+<text x="1610.0" y="370.0" font-family="Helvetica Neue, SF Pro Text, PingFang SC, Hiragino Sans GB, Arial, sans-serif" font-size="12.1" fill="#95a7c4" font-weight="400" text-anchor="start">只看最近 512 个 token 的局部窗口</text>
+<text x="1610.0" y="392.0" font-family="Helvetica Neue, SF Pro Text, PingFang SC, Hiragino Sans GB, Arial, sans-serif" font-size="12.1" fill="#95a7c4" font-weight="400" text-anchor="start">RoPE 全维，θ = 1e4</text>
+<text x="1610.0" y="414.0" font-family="Helvetica Neue, SF Pro Text, PingFang SC, Hiragino Sans GB, Arial, sans-serif" font-size="12.1" fill="#95a7c4" font-weight="400" text-anchor="start">成本 O(T × 512)，显存不随上下文增长</text>
+<rect x="1610.0" y="436" width="14" height="16" rx="3" fill="#2a3a52" opacity="0.7"/>
+<rect x="1630.0" y="436" width="14" height="16" rx="3" fill="#2a3a52" opacity="0.7"/>
+<rect x="1650.0" y="436" width="14" height="16" rx="3" fill="#2a3a52" opacity="0.7"/>
+<rect x="1670.0" y="436" width="14" height="16" rx="3" fill="#2a3a52" opacity="0.7"/>
+<rect x="1690.0" y="436" width="14" height="16" rx="3" fill="#2a3a52" opacity="0.7"/>
+<rect x="1710.0" y="436" width="14" height="16" rx="3" fill="#2a3a52" opacity="0.7"/>
+<rect x="1730.0" y="436" width="14" height="16" rx="3" fill="#2a3a52" opacity="0.7"/>
+<rect x="1750.0" y="436" width="14" height="16" rx="3" fill="#2a3a52" opacity="0.7"/>
+<rect x="1770.0" y="436" width="14" height="16" rx="3" fill="#2dd4bf" opacity="0.9"/>
+<rect x="1790.0" y="436" width="14" height="16" rx="3" fill="#2dd4bf" opacity="0.9"/>
+<rect x="1810.0" y="436" width="14" height="16" rx="3" fill="#2dd4bf" opacity="0.9"/>
+<rect x="1830.0" y="436" width="14" height="16" rx="3" fill="#2dd4bf" opacity="0.9"/>
+<rect x="1850.0" y="436" width="14" height="16" rx="3" fill="#2dd4bf" opacity="0.9"/>
+<rect x="1870.0" y="436" width="14" height="16" rx="3" fill="#2dd4bf" opacity="0.9"/>
+<rect x="1766.0" y="428" width="122" height="32" rx="5" fill="none" stroke="#2dd4bf" stroke-width="1.1" stroke-dasharray="4 3"/>
+<text x="1610.0" y="480.0" font-family="Helvetica Neue, SF Pro Text, PingFang SC, Hiragino Sans GB, Arial, sans-serif" font-size="11" fill="#61738f" font-weight="400" text-anchor="start">窗口 512 token · 每 head 一个 sigmoid 门控</text>
+<text x="1610.0" y="498.0" font-family="Helvetica Neue, SF Pro Text, PingFang SC, Hiragino Sans GB, Arial, sans-serif" font-size="11" fill="#61738f" font-weight="400" text-anchor="start">省掉全局长程，把算力留给稀疏全文层</text>
+<rect x="1968.0" y="314.0" width="356.0" height="200.0" rx="12" fill="#0e1727" stroke="#463218" stroke-width="1.2"/>
+<rect x="1968" y="314" width="356" height="3" rx="1.5" fill="#f6b26b"/>
+<text x="1984.0" y="344.0" font-family="Helvetica Neue, SF Pro Text, PingFang SC, Hiragino Sans GB, Arial, sans-serif" font-size="15.5" fill="#e9eefb" font-weight="600" text-anchor="start">Sparse GQA（DSA 式）</text>
+<rect x="2242.0" y="329.0" width="57.2" height="21" rx="10.5" fill="#f6b26b" opacity="0.13"/>
+<rect x="2242.0" y="329.0" width="57.2" height="21" rx="10.5" fill="none" stroke="#f6b26b" stroke-width="0.9" opacity="0.55"/>
+<text x="2251.0" y="343.6" font-family="Helvetica Neue, SF Pro Text, PingFang SC, Hiragino Sans GB, Arial, sans-serif" font-size="11.5" fill="#f6b26b" font-weight="600" text-anchor="start">× 23 层</text>
+<text x="1984.0" y="370.0" font-family="Helvetica Neue, SF Pro Text, PingFang SC, Hiragino Sans GB, Arial, sans-serif" font-size="12.1" fill="#95a7c4" font-weight="400" text-anchor="start">KV 每 8 个 token 压成 1 个块表示</text>
+<text x="1984.0" y="392.0" font-family="Helvetica Neue, SF Pro Text, PingFang SC, Hiragino Sans GB, Arial, sans-serif" font-size="12.1" fill="#95a7c4" font-weight="400" text-anchor="start">indexer：16 heads · dim 256 · RoPE 32 · ssmax</text>
+<text x="1984.0" y="414.0" font-family="Helvetica Neue, SF Pro Text, PingFang SC, Hiragino Sans GB, Arial, sans-serif" font-size="12.1" fill="#95a7c4" font-weight="400" text-anchor="start">4 个 KV 组各自选 top-512 块 ≈ 4096 token</text>
+<rect x="1984.0" y="436" width="12" height="16" rx="2" fill="#453a26" opacity="0.8"/>
+<rect x="2002.6" y="436" width="12" height="16" rx="2" fill="#453a26" opacity="0.8"/>
+<rect x="2021.2" y="436" width="12" height="16" rx="2" fill="#453a26" opacity="0.8"/>
+<rect x="2039.8" y="436" width="12" height="16" rx="2" fill="#f6b26b" opacity="0.92"/>
+<rect x="2058.4" y="436" width="12" height="16" rx="2" fill="#f6b26b" opacity="0.92"/>
+<rect x="2077.0" y="436" width="12" height="16" rx="2" fill="#f6b26b" opacity="0.92"/>
+<rect x="2095.6" y="436" width="12" height="16" rx="2" fill="#453a26" opacity="0.8"/>
+<rect x="2114.2" y="436" width="12" height="16" rx="2" fill="#453a26" opacity="0.8"/>
+<rect x="2132.8" y="436" width="12" height="16" rx="2" fill="#453a26" opacity="0.8"/>
+<rect x="2151.4" y="436" width="12" height="16" rx="2" fill="#453a26" opacity="0.8"/>
+<rect x="2170.0" y="436" width="12" height="16" rx="2" fill="#453a26" opacity="0.8"/>
+<rect x="2188.6" y="436" width="12" height="16" rx="2" fill="#453a26" opacity="0.8"/>
+<rect x="2207.2" y="436" width="12" height="16" rx="2" fill="#f6b26b" opacity="0.92"/>
+<rect x="2225.8" y="436" width="12" height="16" rx="2" fill="#f6b26b" opacity="0.92"/>
+<rect x="2244.4" y="436" width="12" height="16" rx="2" fill="#f6b26b" opacity="0.92"/>
+<rect x="2263.0" y="436" width="12" height="16" rx="2" fill="#453a26" opacity="0.8"/>
+<rect x="2281.6" y="436" width="12" height="16" rx="2" fill="#453a26" opacity="0.8"/>
+<rect x="2300.2" y="436" width="12" height="16" rx="2" fill="#453a26" opacity="0.8"/>
+<text x="1984.0" y="472.0" font-family="Helvetica Neue, SF Pro Text, PingFang SC, Hiragino Sans GB, Arial, sans-serif" font-size="10.4" fill="#61738f" font-weight="400" text-anchor="start">8 token / 块 · 选中块读原 K/V ＋ 当前块因果可见位</text>
+<text x="1984.0" y="491.0" font-family="Helvetica Neue, SF Pro Text, PingFang SC, Hiragino Sans GB, Arial, sans-serif" font-size="11" fill="#61738f" font-weight="400" text-anchor="start">局部 RoPE：只转 64 / 192 维，θ = 1e7</text>
+<rect x="1594.0" y="540.0" width="24" height="24" rx="7" fill="#a78bfa" opacity="0.16"/>
+<rect x="1594.0" y="540.0" width="24" height="24" rx="7" fill="none" stroke="#a78bfa" stroke-width="1" opacity="0.55"/>
+<text x="1605.5" y="556.5" font-family="SF Mono, SFMono-Regular, Menlo, Consolas, monospace" font-size="12.5" fill="#a78bfa" font-weight="700" text-anchor="middle">4</text>
+<text x="1628.0" y="557.5" font-family="Helvetica Neue, SF Pro Text, PingFang SC, Hiragino Sans GB, Arial, sans-serif" font-size="20.5" fill="#e9eefb" font-weight="600" text-anchor="start">MoE：88 层，每层 353 个专家</text>
+<rect x="1594.0" y="568.0" width="724.0" height="236.0" rx="12" fill="#0e1727" stroke="#212f47" stroke-width="1.2"/>
+<rect x="1610.0" y="584.0" width="400.0" height="34.0" rx="9" fill="#1a1530" stroke="#4a3d70" stroke-width="1.2"/>
+<text x="1622.0" y="606.0" font-family="Helvetica Neue, SF Pro Text, PingFang SC, Hiragino Sans GB, Arial, sans-serif" font-size="11.9" fill="#95a7c4" font-weight="400" text-anchor="start">Router：4096 → 352 · bias ＋ 缩放 3.0 · FP32 打分</text>
+<line x1="2016.0" y1="601.0" x2="2038.0" y2="601.0" stroke="#6b5a99" stroke-width="1.6" opacity="1.0"/>
+<polygon points="2038.0,601.0 2030.5,597.6 2030.5,604.4" fill="#6b5a99"/>
+<text x="2044.0" y="606.0" font-family="SF Mono, SFMono-Regular, Menlo, Consolas, monospace" font-size="12.5" fill="#a78bfa" font-weight="600" text-anchor="start">top-8</text>
+<rect x="1612.0" y="634.0" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="1621.6" y="634.0" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="1631.2" y="634.0" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="1640.8" y="634.0" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="1650.4" y="634.0" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="1660.0" y="634.0" width="7" height="7" rx="1.6" fill="#a78bfa" opacity="1"/>
+<rect x="1669.6" y="634.0" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="1679.2" y="634.0" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="1688.8" y="634.0" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="1698.4" y="634.0" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="1708.0" y="634.0" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="1717.6" y="634.0" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="1727.2" y="634.0" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="1736.8" y="634.0" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="1746.4" y="634.0" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="1756.0" y="634.0" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="1765.6" y="634.0" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="1775.2" y="634.0" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="1784.8" y="634.0" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="1794.4" y="634.0" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="1804.0" y="634.0" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="1813.6" y="634.0" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="1823.2" y="634.0" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="1832.8" y="634.0" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="1842.4" y="634.0" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="1852.0" y="634.0" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="1861.6" y="634.0" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="1871.2" y="634.0" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="1880.8" y="634.0" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="1890.4" y="634.0" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="1900.0" y="634.0" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="1909.6" y="634.0" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="1919.2" y="634.0" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="1928.8" y="634.0" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="1938.4" y="634.0" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="1948.0" y="634.0" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="1957.6" y="634.0" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="1967.2" y="634.0" width="7" height="7" rx="1.6" fill="#a78bfa" opacity="1"/>
+<rect x="1976.8" y="634.0" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="1986.4" y="634.0" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="1996.0" y="634.0" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="2005.6" y="634.0" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="2015.2" y="634.0" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="2024.8" y="634.0" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="1612.0" y="643.6" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="1621.6" y="643.6" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="1631.2" y="643.6" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="1640.8" y="643.6" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="1650.4" y="643.6" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="1660.0" y="643.6" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="1669.6" y="643.6" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="1679.2" y="643.6" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="1688.8" y="643.6" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="1698.4" y="643.6" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="1708.0" y="643.6" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="1717.6" y="643.6" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="1727.2" y="643.6" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="1736.8" y="643.6" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="1746.4" y="643.6" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="1756.0" y="643.6" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="1765.6" y="643.6" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="1775.2" y="643.6" width="7" height="7" rx="1.6" fill="#a78bfa" opacity="1"/>
+<rect x="1784.8" y="643.6" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="1794.4" y="643.6" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="1804.0" y="643.6" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="1813.6" y="643.6" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="1823.2" y="643.6" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="1832.8" y="643.6" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="1842.4" y="643.6" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="1852.0" y="643.6" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="1861.6" y="643.6" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="1871.2" y="643.6" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="1880.8" y="643.6" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="1890.4" y="643.6" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="1900.0" y="643.6" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="1909.6" y="643.6" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="1919.2" y="643.6" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="1928.8" y="643.6" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="1938.4" y="643.6" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="1948.0" y="643.6" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="1957.6" y="643.6" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="1967.2" y="643.6" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="1976.8" y="643.6" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="1986.4" y="643.6" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="1996.0" y="643.6" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="2005.6" y="643.6" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="2015.2" y="643.6" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="2024.8" y="643.6" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="1612.0" y="653.2" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="1621.6" y="653.2" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="1631.2" y="653.2" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="1640.8" y="653.2" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="1650.4" y="653.2" width="7" height="7" rx="1.6" fill="#a78bfa" opacity="1"/>
+<rect x="1660.0" y="653.2" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="1669.6" y="653.2" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="1679.2" y="653.2" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="1688.8" y="653.2" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="1698.4" y="653.2" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="1708.0" y="653.2" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="1717.6" y="653.2" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="1727.2" y="653.2" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="1736.8" y="653.2" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="1746.4" y="653.2" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="1756.0" y="653.2" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="1765.6" y="653.2" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="1775.2" y="653.2" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="1784.8" y="653.2" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="1794.4" y="653.2" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="1804.0" y="653.2" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="1813.6" y="653.2" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="1823.2" y="653.2" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="1832.8" y="653.2" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="1842.4" y="653.2" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="1852.0" y="653.2" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="1861.6" y="653.2" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="1871.2" y="653.2" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="1880.8" y="653.2" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="1890.4" y="653.2" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="1900.0" y="653.2" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="1909.6" y="653.2" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="1919.2" y="653.2" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="1928.8" y="653.2" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="1938.4" y="653.2" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="1948.0" y="653.2" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="1957.6" y="653.2" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="1967.2" y="653.2" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="1976.8" y="653.2" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="1986.4" y="653.2" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="1996.0" y="653.2" width="7" height="7" rx="1.6" fill="#a78bfa" opacity="1"/>
+<rect x="2005.6" y="653.2" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="2015.2" y="653.2" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="2024.8" y="653.2" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="1612.0" y="662.8" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="1621.6" y="662.8" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="1631.2" y="662.8" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="1640.8" y="662.8" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="1650.4" y="662.8" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="1660.0" y="662.8" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="1669.6" y="662.8" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="1679.2" y="662.8" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="1688.8" y="662.8" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="1698.4" y="662.8" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="1708.0" y="662.8" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="1717.6" y="662.8" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="1727.2" y="662.8" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="1736.8" y="662.8" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="1746.4" y="662.8" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="1756.0" y="662.8" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="1765.6" y="662.8" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="1775.2" y="662.8" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="1784.8" y="662.8" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="1794.4" y="662.8" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="1804.0" y="662.8" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="1813.6" y="662.8" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="1823.2" y="662.8" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="1832.8" y="662.8" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="1842.4" y="662.8" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="1852.0" y="662.8" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="1861.6" y="662.8" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="1871.2" y="662.8" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="1880.8" y="662.8" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="1890.4" y="662.8" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="1900.0" y="662.8" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="1909.6" y="662.8" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="1919.2" y="662.8" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="1928.8" y="662.8" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="1938.4" y="662.8" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="1948.0" y="662.8" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="1957.6" y="662.8" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="1967.2" y="662.8" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="1976.8" y="662.8" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="1986.4" y="662.8" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="1996.0" y="662.8" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="2005.6" y="662.8" width="7" height="7" rx="1.6" fill="#a78bfa" opacity="1"/>
+<rect x="2015.2" y="662.8" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="2024.8" y="662.8" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="1612.0" y="672.4" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="1621.6" y="672.4" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="1631.2" y="672.4" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="1640.8" y="672.4" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="1650.4" y="672.4" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="1660.0" y="672.4" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="1669.6" y="672.4" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="1679.2" y="672.4" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="1688.8" y="672.4" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="1698.4" y="672.4" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="1708.0" y="672.4" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="1717.6" y="672.4" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="1727.2" y="672.4" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="1736.8" y="672.4" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="1746.4" y="672.4" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="1756.0" y="672.4" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="1765.6" y="672.4" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="1775.2" y="672.4" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="1784.8" y="672.4" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="1794.4" y="672.4" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="1804.0" y="672.4" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="1813.6" y="672.4" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="1823.2" y="672.4" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="1832.8" y="672.4" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="1842.4" y="672.4" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="1852.0" y="672.4" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="1861.6" y="672.4" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="1871.2" y="672.4" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="1880.8" y="672.4" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="1890.4" y="672.4" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="1900.0" y="672.4" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="1909.6" y="672.4" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="1919.2" y="672.4" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="1928.8" y="672.4" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="1938.4" y="672.4" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="1948.0" y="672.4" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="1957.6" y="672.4" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="1967.2" y="672.4" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="1976.8" y="672.4" width="7" height="7" rx="1.6" fill="#a78bfa" opacity="1"/>
+<rect x="1986.4" y="672.4" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="1996.0" y="672.4" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="2005.6" y="672.4" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="2015.2" y="672.4" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="2024.8" y="672.4" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="1612.0" y="682.0" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="1621.6" y="682.0" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="1631.2" y="682.0" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="1640.8" y="682.0" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="1650.4" y="682.0" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="1660.0" y="682.0" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="1669.6" y="682.0" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="1679.2" y="682.0" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="1688.8" y="682.0" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="1698.4" y="682.0" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="1708.0" y="682.0" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="1717.6" y="682.0" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="1727.2" y="682.0" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="1736.8" y="682.0" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="1746.4" y="682.0" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="1756.0" y="682.0" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="1765.6" y="682.0" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="1775.2" y="682.0" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="1784.8" y="682.0" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="1794.4" y="682.0" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="1804.0" y="682.0" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="1813.6" y="682.0" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="1823.2" y="682.0" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="1832.8" y="682.0" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="1842.4" y="682.0" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="1852.0" y="682.0" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="1861.6" y="682.0" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="1871.2" y="682.0" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="1880.8" y="682.0" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="1890.4" y="682.0" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="1900.0" y="682.0" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="1909.6" y="682.0" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="1919.2" y="682.0" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="1928.8" y="682.0" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="1938.4" y="682.0" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="1948.0" y="682.0" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="1957.6" y="682.0" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="1967.2" y="682.0" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="1976.8" y="682.0" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="1986.4" y="682.0" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="1996.0" y="682.0" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="2005.6" y="682.0" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="2015.2" y="682.0" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="2024.8" y="682.0" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="1612.0" y="691.6" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="1621.6" y="691.6" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="1631.2" y="691.6" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="1640.8" y="691.6" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="1650.4" y="691.6" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="1660.0" y="691.6" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="1669.6" y="691.6" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="1679.2" y="691.6" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="1688.8" y="691.6" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="1698.4" y="691.6" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="1708.0" y="691.6" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="1717.6" y="691.6" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="1727.2" y="691.6" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="1736.8" y="691.6" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="1746.4" y="691.6" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="1756.0" y="691.6" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="1765.6" y="691.6" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="1775.2" y="691.6" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="1784.8" y="691.6" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="1794.4" y="691.6" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="1804.0" y="691.6" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="1813.6" y="691.6" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="1823.2" y="691.6" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="1832.8" y="691.6" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="1842.4" y="691.6" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="1852.0" y="691.6" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="1861.6" y="691.6" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="1871.2" y="691.6" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="1880.8" y="691.6" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="1890.4" y="691.6" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="1900.0" y="691.6" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="1909.6" y="691.6" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="1919.2" y="691.6" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="1928.8" y="691.6" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="1938.4" y="691.6" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="1948.0" y="691.6" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="1957.6" y="691.6" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="1967.2" y="691.6" width="7" height="7" rx="1.6" fill="#a78bfa" opacity="1"/>
+<rect x="1976.8" y="691.6" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="1986.4" y="691.6" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="1996.0" y="691.6" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="2005.6" y="691.6" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="2015.2" y="691.6" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="2024.8" y="691.6" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="1612.0" y="701.2" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="1621.6" y="701.2" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="1631.2" y="701.2" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="1640.8" y="701.2" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="1650.4" y="701.2" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="1660.0" y="701.2" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="1669.6" y="701.2" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="1679.2" y="701.2" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="1688.8" y="701.2" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="1698.4" y="701.2" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="1708.0" y="701.2" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="1717.6" y="701.2" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="1727.2" y="701.2" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="1736.8" y="701.2" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="1746.4" y="701.2" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="1756.0" y="701.2" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="1765.6" y="701.2" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="1775.2" y="701.2" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="1784.8" y="701.2" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="1794.4" y="701.2" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="1804.0" y="701.2" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="1813.6" y="701.2" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="1823.2" y="701.2" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="1832.8" y="701.2" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="1842.4" y="701.2" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="1852.0" y="701.2" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="1861.6" y="701.2" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="1871.2" y="701.2" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="1880.8" y="701.2" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="1890.4" y="701.2" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="1900.0" y="701.2" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="1909.6" y="701.2" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="1919.2" y="701.2" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="1928.8" y="701.2" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="1938.4" y="701.2" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="1948.0" y="701.2" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="1957.6" y="701.2" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="1967.2" y="701.2" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="1976.8" y="701.2" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="1986.4" y="701.2" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="1996.0" y="701.2" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="2005.6" y="701.2" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="2015.2" y="701.2" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<rect x="2024.8" y="701.2" width="7" height="7" rx="1.6" fill="#2a2440" opacity="0.85"/>
+<text x="1612.0" y="726.0" font-family="Helvetica Neue, SF Pro Text, PingFang SC, Hiragino Sans GB, Arial, sans-serif" font-size="11.1" fill="#61738f" font-weight="400" text-anchor="start">352 个路由专家（SwiGLU，d = 1536，clamp ±7）· 每 token 命中 8 个</text>
+<text x="2054.0" y="646.0" font-family="Helvetica Neue, SF Pro Text, PingFang SC, Hiragino Sans GB, Arial, sans-serif" font-size="12.5" fill="#a78bfa" font-weight="600" text-anchor="start">8 / 352 激活</text>
+<text x="2054.0" y="668.0" font-family="Helvetica Neue, SF Pro Text, PingFang SC, Hiragino Sans GB, Arial, sans-serif" font-size="11" fill="#61738f" font-weight="400" text-anchor="start">单专家 3 × 4096 × 1536</text>
+<text x="2054.0" y="685.0" font-family="SF Mono, SFMono-Regular, Menlo, Consolas, monospace" font-size="11" fill="#61738f" font-weight="400" text-anchor="start">＝ 18.9 M</text>
+<text x="2054.0" y="707.0" font-family="Helvetica Neue, SF Pro Text, PingFang SC, Hiragino Sans GB, Arial, sans-serif" font-size="11" fill="#61738f" font-weight="400" text-anchor="start">每 token 路由激活 ≈ 151 M</text>
+<rect x="1610.0" y="742.0" width="692.0" height="34.0" rx="9" fill="#121a2c" stroke="#2c415f" stroke-width="1.2"/>
+<rect x="1610" y="742" width="3.5" height="34" fill="#2dd4bf"/>
+<text x="1624.0" y="764.0" font-family="Helvetica Neue, SF Pro Text, PingFang SC, Hiragino Sans GB, Arial, sans-serif" font-size="11.9" fill="#95a7c4" font-weight="400" text-anchor="start">共享专家 × 1（常开）· d = 1536 · 与路由分支在 FP32 中相加后 all-reduce</text>
+<text x="1610.0" y="790.0" font-family="Helvetica Neue, SF Pro Text, PingFang SC, Hiragino Sans GB, Arial, sans-serif" font-size="11.2" fill="#61738f" font-weight="400" text-anchor="start">层参数：352 × 18.9 M ＋ 18.9 M ≈ 6.66 B　｜　88 层合计 586.4 B</text>
+<rect x="1594.0" y="814.0" width="24" height="24" rx="7" fill="#2dd4bf" opacity="0.16"/>
+<rect x="1594.0" y="814.0" width="24" height="24" rx="7" fill="none" stroke="#2dd4bf" stroke-width="1" opacity="0.55"/>
+<text x="1605.5" y="830.5" font-family="SF Mono, SFMono-Regular, Menlo, Consolas, monospace" font-size="12.5" fill="#2dd4bf" font-weight="700" text-anchor="middle">5</text>
+<text x="1628.0" y="831.5" font-family="Helvetica Neue, SF Pro Text, PingFang SC, Hiragino Sans GB, Arial, sans-serif" font-size="20.5" fill="#e9eefb" font-weight="600" text-anchor="start">参数账本</text>
+<text x="1720.0" y="831.5" font-family="Helvetica Neue, SF Pro Text, PingFang SC, Hiragino Sans GB, Arial, sans-serif" font-size="12.5" fill="#61738f" font-weight="400" text-anchor="start">（BF16 safetensors 索引逐张量复算）</text>
+<rect x="1594" y="848" width="724" height="21" rx="4" fill="#0d1524"/>
+<rect x="1598" y="852" width="3" height="13" rx="1.5" fill="#a78bfa" opacity="0.85"/>
+<text x="1610.0" y="862.0" font-family="Helvetica Neue, SF Pro Text, PingFang SC, Hiragino Sans GB, Arial, sans-serif" font-size="12" fill="#95a7c4" font-weight="400" text-anchor="start">路由专家（88 层 × 352）</text>
+<text x="2044.0" y="862.0" font-family="SF Mono, SFMono-Regular, Menlo, Consolas, monospace" font-size="12" fill="#e9eefb" font-weight="500" text-anchor="end">584.65 B</text>
+<text x="2128.0" y="862.0" font-family="SF Mono, SFMono-Regular, Menlo, Consolas, monospace" font-size="11.5" fill="#61738f" font-weight="400" text-anchor="end">96.96 %</text>
+<rect x="1598" y="871" width="3" height="13" rx="1.5" fill="#f6b26b" opacity="0.85"/>
+<text x="1610.0" y="881.0" font-family="Helvetica Neue, SF Pro Text, PingFang SC, Hiragino Sans GB, Arial, sans-serif" font-size="12" fill="#95a7c4" font-weight="400" text-anchor="start">注意力（92 层，含 indexer）</text>
+<text x="2044.0" y="881.0" font-family="SF Mono, SFMono-Regular, Menlo, Consolas, monospace" font-size="12" fill="#e9eefb" font-weight="500" text-anchor="end">10.30 B</text>
+<text x="2128.0" y="881.0" font-family="SF Mono, SFMono-Regular, Menlo, Consolas, monospace" font-size="11.5" fill="#61738f" font-weight="400" text-anchor="end">1.71 %</text>
+<rect x="1594" y="886" width="724" height="21" rx="4" fill="#0d1524"/>
+<rect x="1598" y="890" width="3" height="13" rx="1.5" fill="#2dd4bf" opacity="0.85"/>
+<text x="1610.0" y="900.0" font-family="Helvetica Neue, SF Pro Text, PingFang SC, Hiragino Sans GB, Arial, sans-serif" font-size="12" fill="#95a7c4" font-weight="400" text-anchor="start">共享专家（88 个）</text>
+<text x="2044.0" y="900.0" font-family="SF Mono, SFMono-Regular, Menlo, Consolas, monospace" font-size="12" fill="#e9eefb" font-weight="500" text-anchor="end">1.66 B</text>
+<text x="2128.0" y="900.0" font-family="SF Mono, SFMono-Regular, Menlo, Consolas, monospace" font-size="11.5" fill="#61738f" font-weight="400" text-anchor="end">0.28 %</text>
+<rect x="1598" y="909" width="3" height="13" rx="1.5" fill="#5c6d88" opacity="0.85"/>
+<text x="1610.0" y="919.0" font-family="Helvetica Neue, SF Pro Text, PingFang SC, Hiragino Sans GB, Arial, sans-serif" font-size="12" fill="#95a7c4" font-weight="400" text-anchor="start">稠密 FFN（4 层）</text>
+<text x="2044.0" y="919.0" font-family="SF Mono, SFMono-Regular, Menlo, Consolas, monospace" font-size="12" fill="#e9eefb" font-weight="500" text-anchor="end">0.68 B</text>
+<text x="2128.0" y="919.0" font-family="SF Mono, SFMono-Regular, Menlo, Consolas, monospace" font-size="11.5" fill="#61738f" font-weight="400" text-anchor="end">0.11 %</text>
+<rect x="1594" y="924" width="724" height="21" rx="4" fill="#0d1524"/>
+<rect x="1598" y="928" width="3" height="13" rx="1.5" fill="#2dd4bf" opacity="0.85"/>
+<text x="1610.0" y="938.0" font-family="Helvetica Neue, SF Pro Text, PingFang SC, Hiragino Sans GB, Arial, sans-serif" font-size="12" fill="#95a7c4" font-weight="400" text-anchor="start">Embedding ＋ LM Head</text>
+<text x="2044.0" y="938.0" font-family="SF Mono, SFMono-Regular, Menlo, Consolas, monospace" font-size="12" fill="#e9eefb" font-weight="500" text-anchor="end">1.06 B</text>
+<text x="2128.0" y="938.0" font-family="SF Mono, SFMono-Regular, Menlo, Consolas, monospace" font-size="11.5" fill="#61738f" font-weight="400" text-anchor="end">0.18 %</text>
+<rect x="1598" y="947" width="3" height="13" rx="1.5" fill="#60a5fa" opacity="0.85"/>
+<text x="1610.0" y="957.0" font-family="Helvetica Neue, SF Pro Text, PingFang SC, Hiragino Sans GB, Arial, sans-serif" font-size="12" fill="#95a7c4" font-weight="400" text-anchor="start">ViT 视觉塔 ＋ 投影</text>
+<text x="2044.0" y="957.0" font-family="SF Mono, SFMono-Regular, Menlo, Consolas, monospace" font-size="12" fill="#e9eefb" font-weight="500" text-anchor="end">1.98 B</text>
+<text x="2128.0" y="957.0" font-family="SF Mono, SFMono-Regular, Menlo, Consolas, monospace" font-size="11.5" fill="#61738f" font-weight="400" text-anchor="end">0.33 %</text>
+<rect x="1594" y="962" width="724" height="21" rx="4" fill="#0d1524"/>
+<rect x="1598" y="966" width="3" height="13" rx="1.5" fill="#f472b6" opacity="0.85"/>
+<text x="1610.0" y="976.0" font-family="Helvetica Neue, SF Pro Text, PingFang SC, Hiragino Sans GB, Arial, sans-serif" font-size="12" fill="#95a7c4" font-weight="400" text-anchor="start">MTP（3 层）</text>
+<text x="2044.0" y="976.0" font-family="SF Mono, SFMono-Regular, Menlo, Consolas, monospace" font-size="12" fill="#e9eefb" font-weight="500" text-anchor="end">2.52 B</text>
+<text x="2128.0" y="976.0" font-family="SF Mono, SFMono-Regular, Menlo, Consolas, monospace" font-size="11.5" fill="#61738f" font-weight="400" text-anchor="end">0.42 %</text>
+<line x1="1598.0" y1="987.0" x2="2314.0" y2="987.0" stroke="#2a3b56" stroke-width="1" opacity="1.0"/>
+<text x="1610.0" y="1004.0" font-family="Helvetica Neue, SF Pro Text, PingFang SC, Hiragino Sans GB, Arial, sans-serif" font-size="12.3" fill="#e9eefb" font-weight="600" text-anchor="start">合计（含最终 norm、router 等）</text>
+<text x="2044.0" y="1004.0" font-family="SF Mono, SFMono-Regular, Menlo, Consolas, monospace" font-size="12.6" fill="#5eead4" font-weight="700" text-anchor="end">602.97 B</text>
+<text x="2128.0" y="1004.0" font-family="SF Mono, SFMono-Regular, Menlo, Consolas, monospace" font-size="11.5" fill="#61738f" font-weight="400" text-anchor="end">100 %</text>
+<text x="1610.0" y="1025.0" font-family="Helvetica Neue, SF Pro Text, PingFang SC, Hiragino Sans GB, Arial, sans-serif" font-size="10.8" fill="#61738f" font-weight="400" text-anchor="start">官方口径 600 B / 27 B 为近似值；27 B 含 embedding、注意力、共享专家与 8 个路由专家</text>
+<line x1="36.0" y1="1066.0" x2="2324.0" y2="1066.0" stroke="#1a2740" stroke-width="1" opacity="1.0"/>
+<text x="36.0" y="1087.0" font-family="Helvetica Neue, SF Pro Text, PingFang SC, Hiragino Sans GB, Arial, sans-serif" font-size="10.8" fill="#61738f" font-weight="400" text-anchor="start">来源：huggingface.co/stepfun-ai/Step-5-Preview（config.json、inference/model.py）＋ 官方博客 Inside Step 5 Preview ｜ 参数量按 BF16 权重索引逐张量统计</text>
+<text x="2324.0" y="1087.0" font-family="SF Mono, SFMono-Regular, Menlo, Consolas, monospace" font-size="10.8" fill="#4a5c78" font-weight="400" text-anchor="end">Sparse GQA: block = 8 token, k = 4096 token ⇒ 512 blocks</text>
+</svg>

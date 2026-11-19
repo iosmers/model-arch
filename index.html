@@ -1,0 +1,970 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="dark">
+<title>Step-5-Preview 模型结构详解</title>
+<style>
+  :root{
+    --bg:#070c17; --panel:#0e1727; --panel2:#121e33; --line:#212f47; --line2:#182640;
+    --txt:#e9eefb; --sec:#95a7c4; --ter:#61738f;
+    --teal:#2dd4bf; --amber:#f6b26b; --violet:#a78bfa; --blue:#60a5fa;
+    --pink:#f472b6; --green:#5eead4; --slate:#5c6d88;
+    --mono:"SF Mono",SFMono-Regular,Menlo,Consolas,monospace;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth; scroll-padding-top:70px}
+  body{
+    margin:0; background:var(--bg); color:var(--txt);
+    font:15px/1.65 "Helvetica Neue","SF Pro Text","PingFang SC","Hiragino Sans GB",Arial,sans-serif;
+    -webkit-font-smoothing:antialiased;
+  }
+  body::before{
+    content:""; position:fixed; inset:0; z-index:-1; pointer-events:none; opacity:.45;
+    background-image:linear-gradient(#16233a 1px,transparent 1px),linear-gradient(90deg,#16233a 1px,transparent 1px);
+    background-size:40px 40px;
+  }
+  a{color:var(--green); text-decoration:none}
+  .mono{font-family:var(--mono)}
+  .wrap{max-width:1280px; margin:0 auto; padding:0 24px 90px}
+
+  /* ---------- top bar ---------- */
+  header.top{
+    position:sticky; top:0; z-index:50; backdrop-filter:blur(12px);
+    background:rgba(7,12,23,.86); border-bottom:1px solid var(--line);
+  }
+  .top-in{max-width:1280px; margin:0 auto; padding:10px 24px; display:flex; align-items:center; gap:18px}
+  .brand{font-size:15px; font-weight:700; letter-spacing:.2px; white-space:nowrap}
+  .brand span{color:var(--green)}
+  nav{display:flex; gap:2px; flex-wrap:wrap; overflow:hidden}
+  nav a{font-size:12.5px; color:var(--sec); padding:6px 9px; border-radius:7px; white-space:nowrap}
+  nav a:hover{background:#101c30; color:var(--green)}
+  nav a.on{color:var(--green); background:#0f1b2c}
+  .top .meta{margin-left:auto; font-size:12px; color:var(--ter); white-space:nowrap}
+
+  /* ---------- headings ---------- */
+  h2{font-size:22px; margin:46px 0 14px; display:flex; align-items:center; gap:10px; font-weight:600}
+  h2 .n{
+    width:26px; height:26px; border-radius:8px; display:grid; place-items:center;
+    background:rgba(45,212,191,.16); border:1px solid rgba(45,212,191,.5);
+    color:var(--teal); font:600 12.5px/1 var(--mono);
+  }
+  h2 small{font-size:13px; color:var(--ter); font-weight:400}
+  h3{font-size:15px; margin:22px 0 8px; color:var(--txt); font-weight:600}
+  p{margin:8px 0; color:var(--sec)}
+  .lead{font-size:14px; color:var(--sec); margin-bottom:14px}
+
+  /* ---------- cards ---------- */
+  .card{
+    background:linear-gradient(180deg,#101a2c,#0c1422);
+    border:1px solid var(--line); border-radius:14px; padding:18px 20px;
+  }
+  .card + .card{margin-top:14px}
+  .grid2{display:grid; grid-template-columns:1fr 1fr; gap:14px; align-items:start}
+  .grid3{display:grid; grid-template-columns:repeat(3,1fr); gap:14px}
+
+  /* ---------- kpi ---------- */
+  .kpis{display:grid; grid-template-columns:repeat(4,1fr); gap:12px; margin:14px 0 4px}
+  .kpi{border:1px solid #22304a; border-radius:12px; padding:12px 14px; background:#0d1728}
+  .kpi b{display:block; font:700 22px/1.25 var(--mono); color:var(--teal)}
+  .kpi i{font-style:normal; font-size:12px; color:var(--ter)}
+  .kpi.amber b{color:var(--amber)} .kpi.violet b{color:var(--violet)} .kpi.blue b{color:var(--blue)}
+
+  /* ---------- flow ---------- */
+  .flow{display:flex; gap:8px; align-items:stretch; flex-wrap:wrap; margin:6px 0}
+  .box{
+    border:1px solid #22304a; border-radius:10px; padding:9px 12px; background:#0e1727;
+    min-width:110px; flex:0 0 auto;
+  }
+  .box b{display:block; font-size:13.5px; color:var(--txt)}
+  .box i{font-style:normal; font-size:11.5px; color:var(--ter)}
+  .box.hot{border-color:rgba(45,212,191,.45); background:#0c1a22}
+  .ar{align-self:center; color:#3d5170; font-size:15px; padding:0 1px}
+
+  /* ---------- tables ---------- */
+  table.data{width:100%; border-collapse:collapse; font-size:13px}
+  table.data th{
+    text-align:left; font-weight:500; color:var(--ter); font-size:11.5px; letter-spacing:.3px;
+    border-bottom:1px solid var(--line); padding:8px 10px; white-space:nowrap;
+  }
+  table.data td{border-bottom:1px solid #141f33; padding:7px 10px; vertical-align:top}
+  table.data tr:last-child td{border-bottom:0}
+  table.data td.m{font-family:var(--mono); color:var(--sec); white-space:nowrap}
+  table.data td.num{font-family:var(--mono); text-align:right; white-space:nowrap}
+  table.data th.r{text-align:right}
+  table.data .dim{color:var(--ter)}
+  .tag{display:inline-block; font:600 10.5px/1 var(--mono); padding:3px 6px; border-radius:5px; margin-right:4px}
+  .t-teal{background:rgba(45,212,191,.14); color:var(--teal)}
+  .t-amber{background:rgba(246,178,107,.14); color:var(--amber)}
+  .t-violet{background:rgba(167,139,250,.14); color:var(--violet)}
+  .t-slate{background:rgba(92,109,136,.18); color:#8ea1bd}
+
+  /* ---------- layer strip ---------- */
+  .strip-wrap{overflow-x:auto; padding:4px 0 8px}
+  .strip{display:flex; gap:2px; min-width:0}
+  .cell{
+    width:10.8px; height:46px; border:0; padding:0; border-radius:2.5px; cursor:pointer;
+    display:flex; flex-direction:column; overflow:hidden; background:#16233a; flex:0 0 auto;
+    transition:transform .08s;
+  }
+  .cell .a{height:50%} .cell .f{height:50%}
+  .cell:hover{transform:translateY(-2px); outline:1px solid rgba(233,238,251,.7)}
+  .cell.sel{outline:2px solid #fff}
+  .ticks{display:flex; gap:2px; margin-top:3px}
+  .ticks .t{width:10.8px; flex:0 0 auto; font:10.5px var(--mono); color:var(--ter); text-align:center; overflow:visible; white-space:nowrap}
+  .legend{display:flex; gap:16px; flex-wrap:wrap; font-size:12px; color:var(--sec); margin-top:10px}
+  .legend i{display:inline-block; width:9px; height:9px; border-radius:2px; margin-right:6px}
+
+  #layerDetail{display:grid; grid-template-columns:180px 1fr; gap:10px 18px; font-size:13.5px}
+  #layerDetail dt{color:var(--ter); font-size:12.5px}
+  #layerDetail dd{margin:0; color:var(--txt)}
+  #layerDetail .big{font:700 26px var(--mono); color:var(--txt)}
+
+  /* ---------- anatomy diagram ---------- */
+  .anat{display:flex; flex-direction:column; align-items:stretch; gap:0; max-width:980px; margin:0 auto}
+  .node{
+    border:1px solid #22304a; border-radius:10px; background:#0e1727; padding:8px 14px;
+    display:grid; grid-template-columns:auto 1fr auto; align-items:center; gap:14px;
+  }
+  .node b{font-size:13.5px; font-weight:600; grid-column:1}
+  .node .mid{grid-column:2}
+  .node .mid{font-size:11.8px; color:var(--ter); white-space:nowrap}
+  .node .sh{font:12px var(--mono); color:var(--ter); white-space:nowrap; grid-column:3; justify-self:end}
+  .node.acc-teal{border-left:3px solid var(--teal)}
+  .node.acc-violet{border-left:3px solid var(--violet)}
+  .node.acc-slate{border-left:3px solid var(--slate)}
+  .node.acc-blue{border-left:3px solid var(--blue)}
+  .node.res{background:#16233a; border-color:#334764; border-radius:14px; padding:5px 14px; grid-template-columns:1fr; text-align:center}
+  .node.res b{font-size:12px; color:var(--sec); font-weight:500}
+  .conn{height:16px; width:2px; background:#2b3d59; margin:0 auto}
+
+  /* ---------- misc ---------- */
+  .note{border-left:3px solid var(--teal); background:#0b1824; padding:10px 14px; border-radius:0 10px 10px 0; color:var(--sec); font-size:13.5px; margin:12px 0}
+  .note.amber{border-color:var(--amber); background:#1a1408}
+  .note.violet{border-color:var(--violet); background:#150f22}
+  .steps{display:flex; flex-direction:column; gap:10px}
+  .step{display:grid; grid-template-columns:26px 1fr; gap:12px; align-items:start}
+  .step .n{width:26px;height:26px;border-radius:8px;background:#152238;border:1px solid #26374f;color:var(--green);display:grid;place-items:center;font:600 12px var(--mono)}
+  .step b{display:block; font-size:13.5px; color:var(--txt); margin-bottom:2px}
+  .step p{margin:0; font-size:12.8px}
+
+  .tabs{display:inline-flex; background:#0b1424; border:1px solid #22304a; border-radius:9px; padding:3px; gap:3px}
+  .tabs button{
+    border:0; background:transparent; color:var(--sec); font:500 12.5px var(--mono);
+    padding:6px 12px; border-radius:6px; cursor:pointer;
+  }
+  .tabs button.on{background:#1a2c44; color:var(--green)}
+
+  .calc{display:grid; grid-template-columns:320px 1fr; gap:20px}
+  .calc label{display:block; font-size:12.5px; color:var(--ter); margin:12px 0 4px}
+  .calc input[type=number]{
+    width:100%; background:#0a1220; border:1px solid #24344f; color:var(--txt);
+    border-radius:8px; padding:8px 10px; font:14px var(--mono);
+  }
+  .presets{display:flex; gap:6px; margin-top:8px}
+  .presets button{
+    flex:1; background:#101c30; border:1px solid #22304a; color:var(--sec);
+    border-radius:7px; padding:5px 0; font:12px var(--mono); cursor:pointer;
+  }
+  .presets button:hover{border-color:var(--teal); color:var(--green)}
+  .outs{display:grid; grid-template-columns:1fr 1fr; gap:12px}
+  .out{border:1px solid #22304a; border-radius:10px; padding:10px 12px; background:#0d1728}
+  .out i{font-style:normal; display:block; font-size:11.5px; color:var(--ter)}
+  .out b{font:700 19px var(--mono); color:var(--green); white-space:nowrap; display:block}
+  .out b small{font-size:11px; color:var(--ter); font-weight:400}
+  .out.warn b{color:var(--amber)}
+
+  /* expert grid */
+  .egrid{display:grid; grid-template-columns:repeat(44,9px); gap:2px}
+  .egrid span{width:9px; height:9px; border-radius:1.8px; background:#2a2440}
+  .egrid span.on{background:var(--violet); box-shadow:0 0 0 1px rgba(167,139,250,.5)}
+
+  /* param bars */
+  .prow{display:grid; grid-template-columns:200px 1fr 86px 62px; gap:10px; align-items:center; font-size:12.5px; margin:6px 0}
+  .prow .nm{color:var(--sec)}
+  .prow .bar{height:9px; border-radius:5px; background:#16233a; overflow:hidden}
+  .prow .bar i{display:block; height:100%; border-radius:5px}
+  .prow .v{font-family:var(--mono); text-align:right; color:var(--txt)}
+  .prow .p{font-family:var(--mono); text-align:right; color:var(--ter)}
+
+  code.inline{font-family:var(--mono); font-size:12.5px; background:#0b1424; border:1px solid #1d2b42; padding:1px 5px; border-radius:5px; color:var(--green)}
+  pre{background:#080f1c; border:1px solid #1a2740; border-radius:10px; padding:12px 14px; overflow:auto; font:12px/1.6 var(--mono); color:#9fb3d1}
+  pre .k{color:#7dd3fc} pre .v{color:#f6b26b} pre .c{color:#4a5c78}
+
+  .mtp-in{display:grid; grid-template-columns:1fr 22px 1fr; gap:8px; align-items:stretch; margin-bottom:0}
+  .mtp-in .plus{display:grid; place-items:center; color:#3d5170; font-size:15px}
+  .chain{display:flex; gap:8px; align-items:center; flex-wrap:wrap; margin-top:6px}
+  .cstep{border:1px solid #3a2b44; background:#120f1c; border-radius:10px; padding:10px 14px; min-width:168px}
+  .cstep b{color:var(--pink); font-size:13px}
+  .cstep i{display:block; font-style:normal; font-family:var(--mono); font-size:11.2px; color:var(--ter); margin-top:4px}
+  .cstep em{display:block; font-style:normal; font-family:var(--mono); font-size:11.8px; color:var(--txt); margin-top:2px}
+
+  footer{margin-top:50px; padding-top:18px; border-top:1px solid var(--line); color:var(--ter); font-size:12px}
+  svg text{font-family:var(--mono)}
+
+  @media print{
+    body::before{display:none}
+    header.top{position:static; background:none}
+    nav{display:none}
+    .card{break-inside:avoid; border-color:#334764}
+    .strip-wrap{overflow:visible}
+  }
+  @media (max-width:1000px){
+    .kpis{grid-template-columns:repeat(2,1fr)}
+    .grid2,.grid3{grid-template-columns:1fr}
+    .calc{grid-template-columns:1fr}
+    nav{display:none}
+    #layerDetail{grid-template-columns:1fr}
+  }
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="top-in">
+    <div class="brand">Step-5-Preview <span>· 结构详解</span></div>
+    <nav>
+      <a href="#overview">总览</a>
+      <a href="#layers">92 层</a>
+      <a href="#anatomy">单层解剖</a>
+      <a href="#attn">注意力</a>
+      <a href="#moe">MoE</a>
+      <a href="#vision">视觉塔</a>
+      <a href="#mtp">MTP</a>
+      <a href="#params">参数账本</a>
+      <a href="#calc">交互计算</a>
+      <a href="#config">配置速查</a>
+    </nav>
+    <div class="meta">602.97 B · 27 B active · 1M ctx</div>
+  </div>
+</header>
+
+<main class="wrap">
+
+<!-- ============================================================ 0 总览 -->
+<h2 id="overview"><span class="n">0</span> 一眼看全 <small>StepFun 稀疏 MoE 多模态模型 · 92 层文本主干</small></h2>
+<p class="lead">「窄而深」：hidden 只有 4096，但堆了 92 层。注意力按 <b>3 层滑动窗 + 1 层稀疏全文</b> 交错，FFN 在 L3–L90 换成 352 选 8 的稀疏 MoE，配 47 层 ViT 与 3 层 MTP。</p>
+
+<div class="kpis">
+  <div class="kpi"><b>602.97 B</b><i>总参数（BF16 权重索引逐张量复算）</i></div>
+  <div class="kpi amber"><b>≈ 27.1 B</b><i>每 token 激活参数</i></div>
+  <div class="kpi violet"><b>92 + 3</b><i>文本主干层 + MTP 层</i></div>
+  <div class="kpi blue"><b>1,048,576</b><i>最大上下文（token）</i></div>
+</div>
+
+<div class="card" style="margin-top:14px">
+  <h3 style="margin-top:0">一个请求在模型里的路径</h3>
+  <div class="flow">
+    <div class="box"><b>文本 token</b><i>vocab 128,896</i></div>
+    <div class="ar">→</div>
+    <div class="box"><b>Embedding</b><i>[T, 4096]</i></div>
+    <div class="ar">→</div>
+    <div class="box hot"><b>Decoder × 92</b><i>GQA + MoE</i></div>
+    <div class="ar">→</div>
+    <div class="box"><b>LM Head</b><i>[4096, 128896]</i></div>
+    <div class="ar">→</div>
+    <div class="box"><b>logits</b><i>next token</i></div>
+  </div>
+  <div class="flow" style="margin-top:6px">
+    <div class="box"><b>图像</b><i>728² 概览 + 504² 切片</i></div>
+    <div class="ar">→</div>
+    <div class="box"><b>ViT × 47</b><i>w 1536 · 16 heads</i></div>
+    <div class="ar">→</div>
+    <div class="box"><b>下采样 + 投影</b><i>1536→3072→6144→4096</i></div>
+    <div class="ar">→</div>
+    <div class="box"><b>视觉 token</b><i>169 / 每切片 81</i></div>
+    <div class="ar">↘</div>
+    <div class="box hot"><b>拼进同一条序列</b><i>图文交错</i></div>
+  </div>
+  <div class="flow" style="margin-top:6px">
+    <div class="box"><b>MTP × 3</b><i>2.52 B · 可选</i></div>
+    <div class="ar">→</div>
+    <div class="box"><b>一次预测 3 个 token</b><i>训练 / 投机解码</i></div>
+  </div>
+</div>
+
+<!-- ============================================================ 1 92 层 -->
+<h2 id="layers"><span class="n">1</span> 92 层骨架 <small>点任意一层看它的配置</small></h2>
+<p class="lead">规则很简单：<b>层号 i 满足 i % 4 == 3 就是稀疏全文层</b>（3, 7, 11 … 91）；<b>3 ≤ i ≤ 90 是 MoE 层</b>，其余（0,1,2,91）是稠密 FFN 层。</p>
+
+<div class="card">
+  <div class="strip-wrap">
+    <div style="display:inline-block">
+      <div class="strip" id="strip"></div>
+      <div class="ticks" id="ticks"></div>
+    </div>
+  </div>
+  <div class="legend">
+    <span><i style="background:var(--teal)"></i>上：Gated SWA ×69</span>
+    <span><i style="background:var(--amber)"></i>上：Sparse GQA ×23</span>
+    <span><i style="background:var(--violet)"></i>下：MoE ×88</span>
+    <span><i style="background:var(--slate)"></i>下：Dense FFN ×4</span>
+  </div>
+</div>
+
+<div class="card">
+  <div style="display:flex; gap:26px; flex-wrap:wrap">
+    <div id="layerDetail">
+      <dt>层</dt><dd><span class="big" id="dL">L3</span></dd>
+      <dt>Attention</dt><dd id="dA">—</dd>
+      <dt>FFN</dt><dd id="dF">—</dd>
+      <dt>RoPE</dt><dd id="dR">—</dd>
+      <dt>Sparse indexer</dt><dd id="dI">—</dd>
+      <dt>本层参数</dt><dd id="dP">—</dd>
+      <dt>备注</dt><dd id="dN">—</dd>
+    </div>
+    <div style="flex:1; min-width:280px">
+      <h3 style="margin-top:0">四类层的参数（按权重实际统计）</h3>
+      <table class="data">
+        <tr><th>层类型</th><th>层号</th><th style="text-align:right">层数</th><th style="text-align:right">单层参数</th></tr>
+        <tr><td><span class="tag t-teal">滑窗</span><span class="tag t-slate">Dense</span></td><td class="m">L0 – L2</td><td class="num">3</td><td class="num">0.277 B</td></tr>
+        <tr><td><span class="tag t-amber">稀疏全文</span><span class="tag t-slate">Dense</span></td><td class="m">L91</td><td class="num">1</td><td class="num">0.296 B</td></tr>
+        <tr><td><span class="tag t-teal">滑窗</span><span class="tag t-violet">MoE</span></td><td class="m">其余 66 层</td><td class="num">66</td><td class="num">6.771 B</td></tr>
+        <tr><td><span class="tag t-amber">稀疏全文</span><span class="tag t-violet">MoE</span></td><td class="m">3,7,…,87</td><td class="num">22</td><td class="num">6.790 B</td></tr>
+      </table>
+      <div class="note" style="margin-top:12px">全文层比滑窗层多的 18.9 M 就是 sparse indexer（每个全文层一套）。其余完全一致。</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ 2 单层解剖 -->
+<h2 id="anatomy"><span class="n">2</span> 单层解剖 <small>以 L3–L90 的 MoE 层为例</small></h2>
+<p class="lead">一个 decoder 层只有两段：<b>RMSNorm → Attention → 残差</b>，<b>RMSNorm → FFN → 残差</b>。区别只在 Attention 走滑窗还是稀疏全文、FFN 是 MoE 还是稠密。</p>
+
+<div class="card">
+  <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; flex-wrap:wrap; gap:10px">
+    <div class="tabs" id="shapeTabs">
+      <button class="on" data-mode="pre">Prefill（T 个 token）</button>
+      <button data-mode="dec">Decode（1 个 token）</button>
+    </div>
+    <div style="font-size:12px; color:var(--ter)">右侧数字是这一步张量的形状</div>
+  </div>
+
+  <div class="anat">
+    <div class="node acc-slate"><b>x（输入隐状态）</b><span class="mid">来自上一层 / embedding</span><span class="sh" data-pre="[T, 4096]" data-dec="[1, 4096]">[T, 4096]</span></div>
+    <div class="conn"></div>
+    <div class="node acc-teal"><b>RMSNorm</b><span class="mid">zero-centered，γ [4096] 存 FP32</span><span class="sh" data-pre="[T, 4096]" data-dec="[1, 4096]">[T, 4096]</span></div>
+    <div class="conn"></div>
+    <div class="node acc-teal"><b>QKV 投影</b><span class="mid">q [12288,4096] 50.33 M ／ k,v [768,4096] 各 3.15 M</span><span class="sh" data-pre="q [T,12288] · kv [T,768]" data-dec="q [1,12288] · kv [1,768]">q [T,12288] · kv [T,768]</span></div>
+    <div class="conn"></div>
+    <div class="node acc-teal"><b>QK-Norm（每 head 192 维）→ RoPE</b><span class="mid">q_norm / k_norm [192]；全文层只转 64/192 维</span><span class="sh" data-pre="q [T,64,192]" data-dec="q [1,64,192]">q [T,64,192]</span></div>
+    <div class="conn"></div>
+    <div class="node acc-amber"><b>Attention：滑窗 512 ／ 稀疏 top-512 块</b><span class="mid">每 token 看 ≤512 或 ≤4096 个 key</span><span class="sh" data-pre="T × S 打分，S ≤ 512/4096" data-dec="读 KV cache">T × S 打分，S ≤ 512/4096</span></div>
+    <div class="conn"></div>
+    <div class="node acc-amber"><b>逐 head 门控</b><span class="mid">g_proj [64,4096] 0.26 M → sigmoid，每 head 一个标量</span><span class="sh" data-pre="[T, 64] → 逐 head 缩放" data-dec="[1, 64]">[T, 64] → 逐 head 缩放</span></div>
+    <div class="conn"></div>
+    <div class="node acc-teal"><b>o_proj</b><span class="mid">[4096,12288] 50.33 M</span><span class="sh" data-pre="[T, 4096]" data-dec="[1, 4096]">[T, 4096]</span></div>
+    <div class="conn"></div>
+    <div class="node res"><b>＋ 残差（hidden / 梯度走 FP32）</b></div>
+    <div class="conn"></div>
+    <div class="node acc-teal"><b>RMSNorm</b><span class="mid">γ [4096] 存 FP32</span><span class="sh" data-pre="[T, 4096]" data-dec="[1, 4096]">[T, 4096]</span></div>
+    <div class="conn"></div>
+    <div class="node acc-violet"><b>MoE：router → top-8 → 352 专家 ＋ 1 共享</b><span class="mid">路由 352 × 18.9 M ＋ 共享 18.9 M，每 token 激活 ≈ 170 M</span><span class="sh" data-pre="gather → [T,8,1536]" data-dec="[1,8,1536]">gather → [T,8,1536]</span></div>
+    <div class="conn"></div>
+    <div class="node res"><b>＋ 残差 → 下一层</b></div>
+  </div>
+
+  <div class="note" style="margin-top:14px">MoE 层里路由分支与共享专家在 <b>FP32</b> 中相加，然后做一次 all-reduce；这也是 TP 时共享专家必须切分、不能简单复制的原因。</div>
+</div>
+
+<div class="card">
+  <h3 style="margin-top:0">每个模块的权重形状与参数量（L3：MoE + 稀疏全文）</h3>
+  <table class="data">
+    <tr><th>模块</th><th>权重形状</th><th style="text-align:right">参数量</th><th>说明</th></tr>
+    <tr><td>self_attn.q_proj</td><td class="m">[12288, 4096]</td><td class="num">50.33 M</td><td class="dim">64 head × 192</td></tr>
+    <tr><td>self_attn.k_proj</td><td class="m">[768, 4096]</td><td class="num">3.15 M</td><td class="dim">4 组 KV × 192</td></tr>
+    <tr><td>self_attn.v_proj</td><td class="m">[768, 4096]</td><td class="num">3.15 M</td><td class="dim">同上</td></tr>
+    <tr><td>self_attn.o_proj</td><td class="m">[4096, 12288]</td><td class="num">50.33 M</td><td class="dim">还原到 hidden</td></tr>
+    <tr><td>self_attn.g_proj</td><td class="m">[64, 4096]</td><td class="num">0.26 M</td><td class="dim">每 head 一个 sigmoid 标量</td></tr>
+    <tr><td>q_norm / k_norm</td><td class="m">[192] ×2</td><td class="num">384</td><td class="dim">按 head_dim 归一化</td></tr>
+    <tr><td>sparse_indexer.q</td><td class="m">[4096, 4096]</td><td class="num">16.78 M</td><td class="dim">16 head × 256 维</td></tr>
+    <tr><td>sparse_indexer.k</td><td class="m">[256, 4096]</td><td class="num">1.05 M</td><td class="dim">单 K head，16 个 Q head 共享</td></tr>
+    <tr><td>sparse_indexer.z</td><td class="m">[256, 4096]</td><td class="num">1.05 M</td><td class="dim">块压缩用辅助投影</td></tr>
+    <tr><td>sparse_indexer.w</td><td class="m">[16, 4096]</td><td class="num">0.07 M</td><td class="dim">每 head 一个打分权重（FP32）</td></tr>
+    <tr><td>ssmax_s</td><td class="m">[64]</td><td class="num">64</td><td class="dim">每 Q head 一个可学习标量</td></tr>
+    <tr><td>moe.gate / router_bias</td><td class="m">[352, 4096] / [352]</td><td class="num">1.44 M</td><td class="dim">FP32 打分，bias 参与选专家</td></tr>
+    <tr><td>moe.gate_proj / up_proj</td><td class="m">[352, 1536, 4096] ×2</td><td class="num">4.43 B</td><td class="dim">352 个专家的权重叠成一个张量</td></tr>
+    <tr><td>moe.down_proj</td><td class="m">[352, 4096, 1536]</td><td class="num">2.21 B</td><td class="dim">同上</td></tr>
+    <tr><td>share_expert.*</td><td class="m">[1536,4096]×2 + [4096,1536]</td><td class="num">18.87 M</td><td class="dim">常开，d = 1536</td></tr>
+    <tr><td>input / post_attention layernorm</td><td class="m">[4096] ×2</td><td class="num">8.2 K</td><td class="dim">zero-centered</td></tr>
+    <tr><td colspan="2"><b>合计</b></td><td class="num"><b>6.790 B</b></td><td class="dim">单层已占全模型 1.13%；88 个 MoE 层合计 586 B</td></tr>
+  </table>
+</div>
+
+<!-- ============================================================ 3 注意力 -->
+<h2 id="attn"><span class="n">3</span> 注意力：一套 GQA 底座，两条路径</h2>
+<p class="lead">92 层都是 GQA（64 Q / 4 KV，head_dim 192，Q/K 各自 Norm，输出逐 head 门控）。差别只在“能看到多少历史”。</p>
+
+<div class="grid2">
+  <div class="card" style="border-top:2px solid var(--teal)">
+    <h3 style="margin-top:0; color:var(--teal)">Gated Sliding Window · 69 层</h3>
+    <table class="data">
+      <tr><td>窗口</td><td class="m">512 token</td></tr>
+      <tr><td>RoPE</td><td class="m">全维 192，θ = 1e4</td></tr>
+      <tr><td>每 token 可见 key</td><td class="m">min(T, 512)</td></tr>
+      <tr><td>代价</td><td class="m">O(T × 512)</td></tr>
+    </table>
+    <p>门控是 <code class="inline">attn_out * sigmoid(W_g x)</code>，每个 head 一个标量。</p>
+    <svg id="maskSlide" width="100%" viewBox="0 0 440 300" preserveAspectRatio="xMinYMin meet"></svg>
+    <div style="font-size:11.5px;color:var(--ter)">示意：每行一个 query，高亮为可见 key；真实窗口 512</div>
+  </div>
+
+  <div class="card" style="border-top:2px solid var(--amber)">
+    <h3 style="margin-top:0; color:var(--amber)">Sparse GQA（DSA 式）· 23 层</h3>
+    <table class="data">
+      <tr><td>块大小 B</td><td class="m">8 token / 块</td></tr>
+      <tr><td>预算 k</td><td class="m">4096 token = 512 块</td></tr>
+      <tr><td>选择粒度</td><td class="m">4 个 KV 组各自独立选</td></tr>
+      <tr><td>indexer</td><td class="m">16 head · 256 维 · RoPE 32</td></tr>
+      <tr><td>本层 RoPE</td><td class="m">局部 64/192，θ = 1e7</td></tr>
+    </table>
+    <p>主路径读的是<b>原始 K/V</b>（不是压缩块），只是读的范围被 indexer 裁到 512 个块 + 当前块内因果可见的位置。</p>
+    <svg id="maskSparse" width="100%" viewBox="0 0 440 300" preserveAspectRatio="xMinYMin meet"></svg>
+    <div style="font-size:11.5px;color:var(--ter)">示意：16 × 16 个块，每行选当前块 + 近块 + 若干远块；真实每行选 512 块</div>
+  </div>
+</div>
+
+<div class="card">
+  <h3 style="margin-top:0">一个 token 在稀疏全文层里走过的 5 步</h3>
+  <div class="steps">
+    <div class="step"><div class="n">1</div><div><b>块内压缩</b><p>每 8 个连续 token 的 index key 压成 1 个块表示，indexer 的算力和 top-k 选择量直接降 8×。</p></div></div>
+    <div class="step"><div class="n">2</div><div><b>indexer 打分</b><p>q 投影到 16 × 256，和块表示做点积；经 ssmax（每 Q head 一个可学习尺度）得到每头分数。</p></div></div>
+    <div class="step"><div class="n">3</div><div><b>top-512 块</b><p>k = 4096 token ⇒ 选 512 个块；4 个 KV 组各自选自己的，互不共享。</p></div></div>
+    <div class="step"><div class="n">4</div><div><b>相邻 token 取并集</b><p>相邻 token 选中的块高度重叠，kernel 把它们合成一次计算，避免碎片化导致 GPU 空转。</p></div></div>
+    <div class="step"><div class="n">5</div><div><b>主注意力</b><p>对选中块读原始 K/V，再加上当前块里因果可见的位置，正常 GQA 计算。</p></div></div>
+  </div>
+</div>
+
+<div class="card">
+  <h3 style="margin-top:0">KV cache：把公式摊开算</h3>
+  <p class="mono" style="font-size:12.5px;color:var(--sec);margin:4px 0 12px">
+    每 token 每层 ＝ 2（K,V）× 4（KV head）× 192（head_dim）× 精度字节数
+  </p>
+  <table class="data">
+    <tr><th>口径</th><th class="r">每 token</th><th class="r">单条 1M 序列</th><th>含义</th></tr>
+    <tr><td>BF16 · 92 层全量</td><td class="num">276 KiB</td><td class="num">276.0 GiB</td><td>最保守：每层都按全长分配</td></tr>
+    <tr><td>BF16 · 滑窗截断</td><td class="num">69 KiB</td><td class="num">69.1 GiB</td><td>23 个全文层全量 ＋ 69 个滑窗层只留 512</td></tr>
+    <tr><td>FP8 · 滑窗截断</td><td class="num">34.5 KiB</td><td class="num">34.6 GiB</td><td>再把 K/V 量化到 FP8</td></tr>
+  </table>
+
+  <div style="margin-top:16px">
+    <div class="prow"><span class="nm">BF16 · 92 层全量</span><span class="bar"><i style="width:100%;background:var(--amber)"></i></span><span class="v">276.0 GiB</span><span class="p">100 %</span></div>
+    <div class="prow"><span class="nm">BF16 · 滑窗截断</span><span class="bar"><i style="width:25%;background:var(--teal)"></i></span><span class="v">69.1 GiB</span><span class="p">25.0 %</span></div>
+    <div class="prow"><span class="nm">FP8 · 滑窗截断</span><span class="bar"><i style="width:12.5%;background:var(--violet)"></i></span><span class="v">34.6 GiB</span><span class="p">12.5 %</span></div>
+  </div>
+
+  <div class="note amber" style="margin-top:16px">
+    <b>所以「1M 要 276 GiB」只在「92 层都按全长存」时成立。</b>按架构允许的最小值算，同一条 1M 序列是 <b>69.1 GiB</b>（BF16）——因为 69/92 层是 512 滑窗，只需要最近 512 个位置；滑窗部分整条序列加起来才 108.5 MB，可以忽略。<b>能不能吃到这 4 倍，取决于推理引擎的 KV 管理</b>：按层类型做环形缓冲/分类型分配就能吃到，统一按 max_model_len 预留就吃不到。
+  </div>
+  <div class="note" style="margin-top:10px">
+    <b>两个容易踩的点：</b><br>
+    ① <b>Sparse GQA 省的是计算，不是存储</b>——选块是从全部历史块里挑，所以 23 个全文层的 K/V 必须全量保留；真正省存储的是那 69 个滑窗层。<br>
+    ② <b>TP 只能切到 4 路</b>：KV 只有 4 个 head，TP ≥ 4 时每卡不再线性下降（每卡仍约 1/4，多出来的 rank 是复制）。1M 全量在 8 卡上是 ~69 GiB/卡，不是 34.5。
+  </div>
+  <div class="note" style="margin-top:10px">
+    另外还有一项小开销：indexer 的 256 维 index key 若也缓存，23 层 × 256 × 2 B × T ≈ <b>12.3 GB</b>（@1M，约占 4.5%）；只缓存每 8 token 压出来的块摘要则只有 ~1.5 GB。
+  </div>
+</div>
+
+<!-- ============================================================ 4 MoE -->
+<h2 id="moe"><span class="n">4</span> MoE：88 层，每层 353 个专家</h2>
+<p class="lead">路由专家 352 个、每 token 命中 8 个；另有 1 个常开的共享专家。专家都是 SwiGLU，intermediate = 1536。</p>
+
+<div class="card">
+  <div style="display:flex; gap:26px; flex-wrap:wrap; align-items:flex-start">
+    <div>
+      <div class="egrid" id="egrid"></div>
+      <div style="font-size:11.5px;color:var(--ter);margin-top:8px">44 × 8 = 352 个路由专家，亮起的是某 token 命中的 8 个</div>
+    </div>
+    <div style="flex:1;min-width:260px">
+      <table class="data">
+        <tr><td>router</td><td class="m">4096 → 352，FP32，带 bias</td></tr>
+        <tr><td>缩放</td><td class="m">moe_router_scaling_factor = 3.0</td></tr>
+        <tr><td>路由专家</td><td class="m">SwiGLU，d = 1536，clamp ±7</td></tr>
+        <tr><td>共享专家</td><td class="m">1 个，SwiGLU，d = 1536，常开</td></tr>
+        <tr><td>合并</td><td class="m">路由 + 共享 在 FP32 中相加</td></tr>
+      </table>
+      <div class="note violet" style="margin-top:12px">
+        每 token 每层激活：8 × 18.87 M（路由）＋ 18.87 M（共享）≈ <b>170 M</b>；乘 88 层 ≈ 14.9 B，是 27 B 激活参数里最大的一块。
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="card">
+  <h3 style="margin-top:0">为什么“600 B 只激活 27 B”</h3>
+  <div class="prow"><span class="nm">路由专家（8/352）</span><span class="bar"><i style="width:49%;background:var(--violet)"></i></span><span class="v">13.29 B</span><span class="p">49.0 %</span></div>
+  <div class="prow"><span class="nm">注意力（含 indexer）</span><span class="bar"><i style="width:36.4%;background:var(--amber)"></i></span><span class="v">10.30 B</span><span class="p">38.0 %</span></div>
+  <div class="prow"><span class="nm">共享专家</span><span class="bar"><i style="width:6.1%;background:var(--teal)"></i></span><span class="v">1.66 B</span><span class="p">6.1 %</span></div>
+  <div class="prow"><span class="nm">Embedding ＋ LM Head</span><span class="bar"><i style="width:3.9%;background:var(--blue)"></i></span><span class="v">1.06 B</span><span class="p">3.9 %</span></div>
+  <div class="prow"><span class="nm">稠密 FFN（4 层）</span><span class="bar"><i style="width:2.5%;background:var(--slate)"></i></span><span class="v">0.68 B</span><span class="p">2.5 %</span></div>
+  <div class="prow"><span class="nm">router 门控（88 层）</span><span class="bar"><i style="width:0.5%;background:var(--slate)"></i></span><span class="v">0.13 B</span><span class="p">0.5 %</span></div>
+  <div class="prow" style="border-top:1px solid var(--line);padding-top:8px;margin-top:8px"><span class="nm" style="color:var(--txt)">合计</span><span></span><span class="v" style="color:var(--green)">27.11 B</span><span class="p">100 %</span></div>
+  <p style="margin-top:10px">注意：embedding 和 LM Head 也算进激活（查表/输出投影），所以不是简单的 <code class="inline">600 × 8/352</code>。</p>
+</div>
+
+<!-- ============================================================ 5 视觉 -->
+<h2 id="vision"><span class="n">5</span> 视觉塔 <small>47 层 ViT ＋ 2 次 stride-2 下采样 ＋ 线性投影</small></h2>
+<p class="lead">图像先切成 14×14 的 patch 进 ViT，再靠两次 stride-2 3×3 卷积把边长各除 2，最后线性投到文本的 4096 维，直接拼进同一条序列。</p>
+
+<div class="card">
+  <div class="grid2">
+    <div>
+      <h3 style="margin-top:0; color:var(--blue)">ViT × 47 层（1.96 B）</h3>
+      <table class="data">
+        <tr><td>patch</td><td class="m">14 × 14，conv1 [1536,3,14,14]</td></tr>
+        <tr><td>宽度 / 头数</td><td class="m">1536 / 16</td></tr>
+        <tr><td>位置编码</td><td class="m">[2704, 1536] 绝对位置 ＋ 2D-RoPE</td></tr>
+        <tr><td>每个 block</td><td class="m">QKV 融合 [4608,1536] · MLP [8960,1536] · LayerScale 0.1</td></tr>
+        <tr><td>归一化</td><td class="m">LN（带 bias）、QuickGELU、无 CLS</td></tr>
+        <tr><td>下采样</td><td class="m">conv 1536→3072→6144（3×3，stride 2）</td></tr>
+        <tr><td>投影</td><td class="m">vit_large_projector [4096, 6144]，无 bias</td></tr>
+      </table>
+    </div>
+    <div>
+      <h3 style="margin-top:0">视觉 token 数怎么来的</h3>
+      <table class="data">
+        <tr><td>728 ÷ 14 = 52</td><td class="m">52² = 2704 patch</td><td class="m">→ 13² = <b>169</b></td></tr>
+        <tr><td>504 ÷ 14 = 36</td><td class="m">36² = 1296 patch</td><td class="m">→ 9² = <b>81</b></td></tr>
+      </table>
+      <p>728×728 是一张「概览图」，出 169 个视觉 token；504×504 是若干个「切片」，每片出 81 个。它们和文本 token 一样走同一条 92 层主干。</p>
+      <div class="note" style="margin-top:12px">视觉塔参数只占全模型 0.33%，但它的 47 层是纯 dense 结构，<b>没有</b> MoE 也没有滑窗/稀疏的区分。</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ 6 MTP -->
+<h2 id="mtp"><span class="n">6</span> MTP：3 层，每层自带一份 LM Head <small>2.52 B · 只影响训练与投机解码</small></h2>
+<p class="lead">MTP 不是「第 93–95 层」那种普通 decoder：它把<b>上一层隐状态</b>和<b>下一个 token 的 embedding</b> 拼起来，过一层 decoder，再用自己的输出头预测<b>更远一个</b> token。三套结构完全相同，首尾串成一条链。</p>
+
+<div class="card">
+  <div class="grid2" style="grid-template-columns: 1.08fr 0.92fr">
+    <div>
+      <h3 style="margin-top:0; color:var(--pink)">一个 MTP 块的内部</h3>
+      <div class="mtp-in">
+        <div class="node acc-teal" style="display:block"><b>h</b><span class="sh" style="display:block;margin-top:2px">主干（或上一层）输出 [T, 4096]</span></div>
+        <div class="plus">＋</div>
+        <div class="node acc-blue" style="display:block"><b>Emb(x<sub>k</sub>)</b><span class="sh" style="display:block;margin-top:2px">下一个 token 的词嵌入 [T, 4096]</span></div>
+      </div>
+      <div class="conn"></div>
+      <div class="node acc-slate"><b>hnorm / enorm → 拼接</b><span class="sh">[T, 8192]</span></div>
+      <div class="conn"></div>
+      <div class="node acc-slate"><b>eh_proj [4096, 8192]</b><span class="sh">[T, 4096] · 33.55 M</span></div>
+      <div class="conn"></div>
+      <div class="node acc-amber"><b>Decoder × 1（滑窗 attn ＋ MLP 13824）</b><span class="sh">[T, 4096] · 277.09 M</span></div>
+      <div class="conn"></div>
+      <div class="node acc-blue"><b>shared_head.norm → output [128896, 4096]</b><span class="sh">[T, 128896] · 527.96 M</span></div>
+      <div class="conn"></div>
+      <div class="node res"><b>logits → 预测第 k+1 个未来 token</b></div>
+      <div class="conn"></div>
+      <div style="font-size:11.5px;color:var(--ter);text-align:center">输出隐状态 h′ 传给下一块 MTP</div>
+    </div>
+    <div>
+      <h3 style="margin-top:0">每块的参数构成（0.839 B）</h3>
+      <table class="data">
+        <tr><th>组件</th><th>形状</th><th class="r">参数量</th></tr>
+        <tr><td>enorm / hnorm</td><td class="m">[4096] ×2</td><td class="num">8.2 K</td></tr>
+        <tr><td>eh_proj</td><td class="m">[4096, 8192]</td><td class="num">33.55 M</td></tr>
+        <tr><td>Decoder · 注意力</td><td class="m">GQA 64Q/4KV · head_dim 192 ＋ g_proj</td><td class="num">107.22 M</td></tr>
+        <tr><td>Decoder · 稠密 MLP</td><td class="m">SwiGLU，d = 13824（非 MoE）</td><td class="num">169.87 M</td></tr>
+        <tr><td>Decoder · RMSNorm</td><td class="m">[4096] ×2</td><td class="num">8.2 K</td></tr>
+        <tr><td>shared_head.norm</td><td class="m">[4096]</td><td class="num">4.1 K</td></tr>
+        <tr><td>shared_head.output</td><td class="m">[128896, 4096]</td><td class="num">527.96 M</td></tr>
+        <tr><td colspan="2"><b>单块合计</b></td><td class="num"><b>838.62 M</b></td></tr>
+        <tr><td colspan="2"><b>3 块合计</b></td><td class="num"><b>2.516 B</b></td></tr>
+      </table>
+      <div class="note violet" style="margin-top:12px">63% 的参数是输出层：3 块各自带一份 128896×4096 的 <code class="inline">shared_head.output</code>，所以 MTP 看着「只有 3 层」却占了 2.52 B。</div>
+    </div>
+  </div>
+</div>
+
+<div class="card">
+  <h3 style="margin-top:0">3 块怎么串起来，以及它怎么被用</h3>
+  <div class="chain">
+    <div class="cstep"><b>MTP-1</b><i>h ＋ Emb(x<sub>t+1</sub>)</i><em>→ 预测 x<sub>t+2</sub></em></div>
+    <div class="ar">→</div>
+    <div class="cstep"><b>MTP-2</b><i>h₁ ＋ Emb(x<sub>t+2</sub>)</i><em>→ 预测 x<sub>t+3</sub></em></div>
+    <div class="ar">→</div>
+    <div class="cstep"><b>MTP-3</b><i>h₂ ＋ Emb(x<sub>t+3</sub>)</i><em>→ 预测 x<sub>t+4</sub></em></div>
+  </div>
+  <div class="grid2" style="margin-top:14px">
+    <div>
+      <h3 style="margin-top:0">训练时</h3>
+      <p>每一块都在多预测一步：主 LM Head 学 x<sub>t+1</sub>，MTP-1 学 x<sub>t+2</sub>，MTP-2 学 x<sub>t+3</sub>，MTP-3 学 x<sub>t+4</sub>。相当于给同一个隐状态加了三个「更远的监督」，逼模型在隐空间里提前规划。</p>
+    </div>
+    <div>
+      <h3 style="margin-top:0">推理时（投机解码）</h3>
+      <p>主干一次前向得到 h → MTP 串行给出 3 个候选 token → 主模型并行验证，能接几个就接几个。官方最小实现直接不加载这 2.52 B，<b>不开启就没有任何开销</b>。</p>
+    </div>
+  </div>
+  <div class="note amber" style="margin-top:6px">
+    <b>哪些是权重里读出来的、哪些是推断：</b>层数（92/93/94）、每块包含 <code class="inline">enorm / hnorm / eh_proj / 一个 decoder 层 / shared_head.norm + output</code>、decoder 是<b>滑窗注意力 + 稠密 MLP（13824，非 MoE）</b>、每块 838.62 M——这些都能在 checkpoint 的 17 个张量里逐一对上。至于「拼接顺序、embedding 与主干共享、三层首尾串联」，是按 MTP 的通行接法推断的，官方推理实现没有加载这部分代码。
+  </div>
+</div>
+
+<!-- ============================================================ 7 参数账本 -->
+<h2 id="params"><span class="n">7</span> 参数账本 <small>按 BF16 safetensors 索引逐张量统计，2,449 个张量</small></h2>
+
+<div class="card">
+  <div class="prow"><span class="nm">MoE 路由专家</span><span class="bar"><i style="width:96.96%;background:var(--violet)"></i></span><span class="v">584.65 B</span><span class="p">96.96 %</span></div>
+  <div class="prow"><span class="nm">注意力（含 indexer）</span><span class="bar"><i style="width:1.71%;background:var(--amber)"></i></span><span class="v">10.30 B</span><span class="p">1.71 %</span></div>
+  <div class="prow"><span class="nm">MTP × 3</span><span class="bar"><i style="width:0.42%;background:var(--pink)"></i></span><span class="v">2.52 B</span><span class="p">0.42 %</span></div>
+  <div class="prow"><span class="nm">ViT 视觉塔 ＋ 投影</span><span class="bar"><i style="width:0.33%;background:var(--blue)"></i></span><span class="v">1.98 B</span><span class="p">0.33 %</span></div>
+  <div class="prow"><span class="nm">共享专家</span><span class="bar"><i style="width:0.28%;background:var(--teal)"></i></span><span class="v">1.66 B</span><span class="p">0.28 %</span></div>
+  <div class="prow"><span class="nm">Embedding ＋ LM Head</span><span class="bar"><i style="width:0.18%;background:var(--teal)"></i></span><span class="v">1.06 B</span><span class="p">0.18 %</span></div>
+  <div class="prow"><span class="nm">稠密 FFN（4 层）</span><span class="bar"><i style="width:0.11%;background:var(--slate)"></i></span><span class="v">0.68 B</span><span class="p">0.11 %</span></div>
+  <div class="prow" style="border-top:1px solid var(--line);padding-top:8px;margin-top:8px"><span class="nm" style="color:var(--txt)">合计</span><span></span><span class="v" style="color:var(--green)">602.97 B</span><span class="p">100 %</span></div>
+  <p style="margin-top:10px">官方口径是 <b>600 B 总参 / 27 B 激活</b>（近似值）。上表是逐张量复算：文本主干 597.42 B ＋ MTP 2.516 B ＋ ViT 1.956 B ＋ 投影 0.025 B ＝ 602.973 B。</p>
+</div>
+
+<!-- ============================================================ 7 计算器 -->
+<h2 id="calc"><span class="n">8</span> 交互：换个上下文长度试试</h2>
+<p class="lead">改一下 T，看 KV cache、每 token 平均能看多少历史、以及注意力占总计算量的比例怎么变。</p>
+
+<div class="card">
+  <div class="calc">
+    <div>
+      <label>上下文长度 T（token）</label>
+      <input type="number" id="inT" value="131072" min="1" max="1048576" step="1024">
+      <div class="presets">
+        <button data-t="8192">8 K</button>
+        <button data-t="131072">128 K</button>
+        <button data-t="1048576">1 M</button>
+      </div>
+      <label>batch（同时跑的序列数）</label>
+      <input type="number" id="inB" value="1" min="1" max="1024" step="1">
+      <label>KV 精度</label>
+      <div class="tabs" id="precTabs" style="margin-top:4px">
+        <button class="on" data-p="2">BF16</button>
+        <button data-p="1">FP8</button>
+      </div>
+      <label>KV 口径</label>
+      <div class="tabs" id="modeTabs" style="margin-top:4px">
+        <button class="on" data-m="full">92 层全量</button>
+        <button data-m="win">滑窗截断</button>
+      </div>
+    </div>
+    <div>
+      <div class="outs">
+        <div class="out"><i>KV cache / token</i><b id="oKvTok">276 <small>KiB</small></b></div>
+        <div class="out"><i>KV cache 总量</i><b id="oKvAll">33.0 <small>GiB</small></b></div>
+        <div class="out"><i>平均每 token 可见 key（每层）</i><b id="oVis">1,408</b></div>
+        <div class="out"><i>相对全 dense 因果注意力</i><b id="oRat">0.27 <small>%</small></b></div>
+        <div class="out"><i>注意力 FLOPs / token</i><b id="oAttn">6.4 <small>GFLOPs</small></b></div>
+        <div class="out"><i>权重 GEMM FLOPs / token</i><b id="oW">54.2 <small>GFLOPs</small></b></div>
+      </div>
+      <p id="oNote" style="font-size:12.5px;margin-top:10px"></p>
+      <div class="note" style="font-size:12.5px">口径：注意力 FLOPs = 4 × (64 × 192) × Σ每 token 可见 key；权重 GEMM = 2 × 27.11 B。只算主路径，不含 indexer 自身与通信。</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ 8 配置 -->
+<h2 id="config"><span class="n">9</span> 配置速查 <small>官方 config.json 原文关键字段</small></h2>
+
+<div class="grid2">
+  <div class="card">
+    <h3 style="margin-top:0">文本主干</h3>
+    <table class="data">
+      <tr><td>architectures</td><td class="m">Step5ForConditionalGeneration</td></tr>
+      <tr><td>hidden_size</td><td class="m">4096</td></tr>
+      <tr><td>intermediate_size</td><td class="m">13824</td></tr>
+      <tr><td>num_hidden_layers</td><td class="m">92</td></tr>
+      <tr><td>vocab_size</td><td class="m">128896</td></tr>
+      <tr><td>num_attention_heads</td><td class="m">64</td></tr>
+      <tr><td>num_attention_groups</td><td class="m">4</td></tr>
+      <tr><td>head_dim</td><td class="m">192</td></tr>
+      <tr><td>sliding_window</td><td class="m">512</td></tr>
+      <tr><td>max_position_embeddings</td><td class="m">1048576</td></tr>
+      <tr><td>rope_scaling</td><td class="m">llama3（yarn 仅用于 full_attention）</td></tr>
+      <tr><td>fp32_residual_connection</td><td class="m">true</td></tr>
+      <tr><td>norm_dtype</td><td class="m">float32</td></tr>
+      <tr><td>num_nextn_predict_layers</td><td class="m">3</td></tr>
+    </table>
+  </div>
+  <div class="card">
+    <h3 style="margin-top:0">MoE / 稀疏 / 视觉</h3>
+    <table class="data">
+      <tr><td>moe_num_experts</td><td class="m">352</td></tr>
+      <tr><td>moe_top_k</td><td class="m">8</td></tr>
+      <tr><td>moe_intermediate_size</td><td class="m">1536</td></tr>
+      <tr><td>share_expert_dim</td><td class="m">1536</td></tr>
+      <tr><td>moe_layer_list</td><td class="m">3 … 90（88 层）</td></tr>
+      <tr><td>sparse_config.topk</td><td class="m">512 块</td></tr>
+      <tr><td>sparse_config.region_block_size</td><td class="m">8</td></tr>
+      <tr><td>compression_method</td><td class="m">csa_block_compress</td></tr>
+      <tr><td>attention_impl</td><td class="m">sparse_gqa</td></tr>
+      <tr><td>vision.layers / width</td><td class="m">47 / 1536</td></tr>
+      <tr><td>vision.image_size / patch</td><td class="m">728 / 14</td></tr>
+      <tr><td>quantization</td><td class="m">fp8 e4m3 · 128×128 · dynamic</td></tr>
+    </table>
+    <pre><span class="c">// layer_types 前 8 项（共 95 = 92 + 3 MTP）</span>
+["sliding","sliding","sliding",<span class="v">"full"</span>,
+ "sliding","sliding","sliding",<span class="v">"full"</span>, …]
+<span class="c">// i % 4 == 3  →  full (sparse)</span></pre>
+  </div>
+</div>
+
+<footer>
+  来源：<a href="https://huggingface.co/stepfun-ai/Step-5-Preview">huggingface.co/stepfun-ai/Step-5-Preview</a>
+  （config.json / inference/model.py / kernel.py）＋ 官方博客 <a href="https://platform.stepfun.ai/blog/inside-step-5-preview">Inside Step 5 Preview</a>
+  ＋ BF16 权重索引逐张量统计。参数与形状均可按上表复算；激活参数、KV cache、FLOPs 为按配置推导。
+</footer>
+
+</main>
+
+<script>
+(function(){
+  "use strict";
+  var CLS = {
+    moeFull:   {p: 6.790260256, a: "full",   f: "moe"},
+    moeSlide:  {p: 6.771319520, a: "slide",  f: "moe"},
+    denseFull: {p: 0.296035520, a: "full",   f: "dense"},
+    denseSlide:{p: 0.277094784, a: "slide",  f: "dense"}
+  };
+  var TEAL="#2dd4bf", AMBER="#f6b26b", VIOLET="#a78bfa", SLATE="#5c6d88";
+
+  /* ---------- 92 层 ribbon ---------- */
+  var strip = document.getElementById('strip');
+  var cells = [];
+  for (var i=0;i<92;i++){
+    var full = (i % 4 === 3), moe = (i>=3 && i<=90);
+    var b = document.createElement('button');
+    b.className = 'cell';
+    b.type = 'button';
+    b.setAttribute('aria-label', 'L'+i);
+    b.title = 'L' + i + ' · ' + (full ? '稀疏全文' : '滑窗') + ' + ' + (moe ? 'MoE' : '稠密 FFN');
+    b.innerHTML = '<span class="a" style="background:'+(full?AMBER:TEAL)+'"></span>'+
+                  '<span class="f" style="background:'+(moe?VIOLET:SLATE)+'"></span>';
+    b.dataset.i = i;
+    b.addEventListener('click', function(e){ select(+e.currentTarget.dataset.i); });
+    strip.appendChild(b);
+    cells.push(b);
+  }
+
+  function detail(i){
+    var full = (i % 4 === 3), moe = (i>=3 && i<=90);
+    var c = full ? (moe ? CLS.moeFull : CLS.denseFull) : (moe ? CLS.moeSlide : CLS.denseSlide);
+    document.getElementById('dL').textContent = 'L' + i;
+    document.getElementById('dA').innerHTML = full
+      ? '<span class="tag t-amber">Sparse GQA</span> 稀疏全文，top-512 块 ≈ 4096 token'
+      : '<span class="tag t-teal">Gated SWA</span> 滑窗 512 token';
+    document.getElementById('dF').innerHTML = moe
+      ? '<span class="tag t-violet">MoE</span> 352 路由（top-8）＋ 1 共享，d = 1536'
+      : '<span class="tag t-slate">Dense</span> MLP，d = 13824';
+    document.getElementById('dR').innerHTML = full
+      ? 'θ = 1e7，只转 64 / 192 维（partial 1/3）'
+      : 'θ = 1e4，全维 192';
+    document.getElementById('dI').innerHTML = full ? '✓ 本层带 indexer（18.9 M）' : '— 无（只在全文层）';
+    document.getElementById('dP').innerHTML = '<span class="mono" style="font-size:16px">'+c.p.toFixed(4)+'</span> B';
+    var note = [];
+    if (i === 0) note.push('第一层：滑窗 + 稠密 FFN，之后连续两层同为滑窗');
+    else if (i === 3) note.push('第一个稀疏全文层，3:1 的节奏从这里开始');
+    else if (i === 91) note.push('最后一层：稀疏全文 + 稠密 FFN，之后再接 LM Head');
+    else if (i % 4 === 3) note.push('每 4 层里的那个「1」');
+    else note.push('滑窗层，构成 3:1 里的「3」');
+    if (i >= 88 && i <= 90) note.push('配置里这三层的专家不在 FP8 转换列表内');
+    if (i === 90) note.push('最后一个 MoE 层');
+    document.getElementById('dN').textContent = note.join('；');
+  }
+
+  var current = -1;
+  function select(i){
+    if (current >= 0) cells[current].classList.remove('sel');
+    current = i;
+    cells[i].classList.add('sel');
+    detail(i);
+    var r = cells[i].getBoundingClientRect(), s = strip.getBoundingClientRect();
+    if (r.left < s.left || r.right > s.right){ cells[i].scrollIntoView({block:'nearest', inline:'center'}); }
+  }
+  cells[3].classList.add('sel'); current = 3; detail(3);
+
+  document.addEventListener('keydown', function(e){
+    if (e.target && e.target.tagName === 'INPUT') return;
+    if (e.key === 'ArrowRight' && current < 91) select(current+1);
+    if (e.key === 'ArrowLeft' && current > 0) select(current-1);
+  });
+
+  /* ---------- 形状切换 ---------- */
+  var shapeTabs = document.getElementById('shapeTabs');
+  shapeTabs.addEventListener('click', function(e){
+    var b = e.target.closest('button'); if (!b) return;
+    [].forEach.call(shapeTabs.children, function(x){ x.classList.toggle('on', x === b); });
+    var mode = b.dataset.mode;
+    [].forEach.call(document.querySelectorAll('[data-pre]'), function(el){
+      el.textContent = el.dataset[mode];
+    });
+  });
+
+  /* ---------- expert grid ---------- */
+  var eg = document.getElementById('egrid');
+  var hit = {5:1,37:1,61:1,92:1,128:1,173:1,214:1,301:1};
+  for (var k=0;k<352;k++){
+    var s = document.createElement('span');
+    if (hit[k]) s.className = 'on';
+    eg.appendChild(s);
+  }
+
+  /* ---------- masks (toy illustration) ---------- */
+  var NS = "http://www.w3.org/2000/svg";
+  function el(tag, attrs){
+    var e = document.createElementNS(NS, tag);
+    for (var k in attrs) e.setAttribute(k, attrs[k]);
+    return e;
+  }
+  function frame(svg, w, h){
+    svg.setAttribute('viewBox', '0 0 ' + w + ' ' + h);
+    svg.style.display = 'block';
+    svg.style.maxWidth = '340px';
+    svg.style.margin = '14px auto 6px';
+  }
+  function legend(svg, y, items){
+    var lx = 0;
+    items.forEach(function(it){
+      svg.appendChild(el('rect', {x: lx, y: y, width: 9, height: 9, rx: 1.8, fill: it[0]}));
+      var t = el('text', {x: lx + 13, y: y + 7.5, fill: '#61738f', 'font-size': 9.5});
+      t.textContent = it[1];
+      svg.appendChild(t);
+      lx += 13 + it[1].length * 9.6 + 14;
+    });
+  }
+
+  /* per-token sliding window */
+  (function(){
+    var svg = document.getElementById('maskSlide');
+    var N = 28, cell = 9, pad = 30, win = 6, size = N * cell;
+    frame(svg, size + pad * 2, size + pad * 2 + 16);
+    var g = el('g', {transform: 'translate(' + pad + ',' + pad + ')'});
+    for (var qi = 0; qi < N; qi++){
+      for (var ki = 0; ki < N; ki++){
+        var vis = ki <= qi && ki >= qi - win + 1;
+        g.appendChild(el('rect', {
+          x: ki * cell, y: qi * cell, width: cell - 1, height: cell - 1, rx: 1.4,
+          fill: vis ? '#2dd4bf' : '#141f33'
+        }));
+      }
+    }
+    svg.appendChild(g);
+    var t = el('text', {x: 2, y: 13, fill: '#4a5c78', 'font-size': 10});
+    t.textContent = 'query ↓    key →';
+    svg.appendChild(t);
+    legend(svg, size + pad * 2 + 2, [['#2dd4bf', '窗口内可见'], ['#141f33', '窗口外忽略']]);
+  })();
+
+  /* block-level sparse selection */
+  (function(){
+    var svg = document.getElementById('maskSparse');
+    var N = 16, cell = 17, pad = 26, size = N * cell;
+    frame(svg, size + pad * 2, size + pad * 2 + 16);
+    var g = el('g', {transform: 'translate(' + pad + ',' + pad + ')'});
+    for (var r = 0; r < N; r++){
+      var picks = {};
+      if (r >= 1) picks[r - 1] = 1;
+      [ (r * 7 + 3) % Math.max(1, r), (r * 11 + 5) % Math.max(1, r), (r * 13 + 7) % Math.max(1, r) ]
+        .forEach(function(v){ if (v < r && v !== r - 1) picks[v] = 1; });
+      for (var c = 0; c < N; c++){
+        var fill;
+        if (c > r) fill = '#0c1523';
+        else if (c === r) fill = '#8d6a3d';
+        else if (picks[c]) fill = '#f6b26b';
+        else fill = '#141f33';
+        g.appendChild(el('rect', {
+          x: c * cell, y: r * cell, width: cell - 2, height: cell - 2, rx: 2.5, fill: fill
+        }));
+      }
+    }
+    svg.appendChild(g);
+    var t = el('text', {x: 2, y: 12, fill: '#4a5c78', 'font-size': 10});
+    t.textContent = 'query 块 ↓    key 块 →    （1 格 = 8 token）';
+    svg.appendChild(t);
+    legend(svg, size + pad * 2 + 2, [['#8d6a3d', '当前块'], ['#f6b26b', '选中'], ['#141f33', '未选'], ['#0c1523', '未来']]);
+  })();
+
+  /* ---------- ticks under the ribbon ---------- */
+  var ticks = document.getElementById('ticks');
+  var marks = {0:1, 23:1, 46:1, 69:1, 91:1};
+  for (var t = 0; t < 92; t++){
+    var sp = document.createElement('span');
+    sp.className = 't';
+    if (marks[t]) sp.textContent = 'L' + t;
+    ticks.appendChild(sp);
+  }
+
+  /* ---------- scroll spy ---------- */
+  var links = [].slice.call(document.querySelectorAll('nav a'));
+  var secs = links.map(function(a){ return document.querySelector(a.getAttribute('href')); }).filter(Boolean);
+  function spy(){
+    var y = window.scrollY + 120, best = -1;
+    secs.forEach(function(sc, i){ if (sc.offsetTop <= y) best = i; });
+    links.forEach(function(a, i){ a.classList.toggle('on', i === best); });
+  }
+  window.addEventListener('scroll', spy, {passive:true}); spy();
+
+  /* ---------- calculator ---------- */
+  var inT = document.getElementById('inT'), inB = document.getElementById('inB');
+  var precBtns = document.getElementById('precTabs');
+  var bytes = 2, timer = null;
+
+  var KV_TOK = 92 * 2 * 4 * 192;      // values per token, all layers
+  var KV_FULL = 23 * 2 * 4 * 192;     // per token, only the 23 full layers
+  var KV_WIN  = 69 * 512 * 2 * 4 * 192; // fixed cost of the 69 sliding layers
+  var mode = 'full';
+  var modeTabs = document.getElementById('modeTabs');
+  var ACT = 27.11e9;                  // active params
+
+  function fmtBytes(b){
+    var u = ['B','KiB','MiB','GiB','TiB'], i = 0;
+    while (b >= 1024 && i < u.length-1){ b /= 1024; i++; }
+    return (b >= 100 ? b.toFixed(0) : b >= 10 ? b.toFixed(1) : b.toFixed(2)) + '|' + u[i];
+  }
+  function calc(){
+    var T = Math.max(1, Math.min(1048576, parseFloat(inT.value)||1));
+    var B = Math.max(1, Math.min(1024, parseInt(inB.value,10)||1));
+    var kvTok = (mode === 'full' ? KV_TOK : KV_FULL) * bytes;
+    var total = (mode === 'full' ? KV_TOK * bytes * T : KV_FULL * bytes * T + KV_WIN * bytes) * B;
+    var sTok = 69*Math.min(T,512) + 23*Math.min(T,4096);
+    var vis = sTok / 92;
+    var dense = T/2;
+    var ratio = vis / dense;
+    var attnFlops = 4 * (64*192) * sTok;
+    var wFlops = 2 * ACT;
+    var kv = fmtBytes(kvTok).split('|');
+    var tot2 = fmtBytes(total).split('|');
+
+    document.getElementById('oKvTok').innerHTML = kv[0] + ' <small>'+kv[1]+'</small>'
+      + (mode === 'win' ? ' <small>边际</small>' : '');
+    document.getElementById('oKvAll').innerHTML = tot2[0] + ' <small>'+tot2[1]+'</small>';
+    document.getElementById('oVis').textContent = Math.round(vis).toLocaleString();
+    document.getElementById('oRat').innerHTML = (ratio*100).toFixed(ratio < 0.01 ? 3 : 2) + ' <small>%</small>';
+    document.getElementById('oAttn').innerHTML = (attnFlops/1e9).toFixed(1) + ' <small>GFLOPs</small>';
+    document.getElementById('oW').innerHTML = (wFlops/1e9).toFixed(1) + ' <small>GFLOPs</small>';
+
+    var share = attnFlops / (attnFlops + wFlops) * 100;
+    document.getElementById('oNote').innerHTML =
+      'T = ' + T.toLocaleString() + '，batch = ' + B + '：每 token 平均只看 <b>' + Math.round(vis).toLocaleString() +
+      '</b> 个 key（全 dense 因果注意力是 ' + Math.round(dense).toLocaleString() + '），注意力约占总计算量的 <b>' +
+      share.toFixed(1) + '%</b>。' + (T >= 4096 ? '由于滑窗与 512 块封顶，注意力成本已经不再随 T 增长。' : '') +
+      (mode === 'win' ? ' KV 只计 23 个全文层的增量，另加 69 个滑窗层固定的 108.5 MB/条。' : '');
+    document.getElementById('oKvAll').parentElement.classList.toggle('warn', total > 64*1024*1024*1024);
+  }
+  inT.addEventListener('input', calc);
+  inB.addEventListener('input', calc);
+  [].forEach.call(document.querySelectorAll('.presets button'), function(b){
+    b.addEventListener('click', function(){ inT.value = b.dataset.t; calc(); });
+  });
+  modeTabs.addEventListener('click', function(e){
+    var b = e.target.closest('button'); if (!b) return;
+    [].forEach.call(modeTabs.children, function(x){ x.classList.toggle('on', x === b); });
+    mode = b.dataset.m; calc();
+  });
+  precBtns.addEventListener('click', function(e){
+    var b = e.target.closest('button'); if (!b) return;
+    [].forEach.call(precBtns.children, function(x){ x.classList.toggle('on', x === b); });
+    bytes = parseFloat(b.dataset.p); calc();
+  });
+  calc();
+})();
+</script>
+</body>
+</html>
